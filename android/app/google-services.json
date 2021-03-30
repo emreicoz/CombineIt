@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "735950342559",
+    "project_id": "combineit-47d0b",
+    "storage_bucket": "combineit-47d0b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:735950342559:android:4fd8468e9312bc3da415aa",
+        "android_client_info": {
+          "package_name": "com.combineit"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "735950342559-dv0kukc56oughpbaeukpegfin348v5um.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAlptfEEYuq8FqYYftuj1UnHEPpeYbog5Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "735950342559-dv0kukc56oughpbaeukpegfin348v5um.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

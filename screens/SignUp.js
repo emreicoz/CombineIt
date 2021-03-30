@@ -3,6 +3,7 @@ import {StyleSheet, View, TextInput, ScrollView} from 'react-native';
 import {Button, Label, Text} from 'native-base';
 import {Formik} from 'formik';
 import * as yup from 'yup';
+import auth from '@react-native-firebase/auth';
 
 const SignUpSchema = yup.object().shape({
   nameSurname: yup
@@ -25,7 +26,7 @@ const SignUpSchema = yup.object().shape({
   confirmPassword: yup
     .string()
     .oneOf([yup.ref('password'), null], 'Şifreler birbirleri ile eşleşmiyor.')
-    .required("Bu alan boş bırakılamaz"),
+    .required('Bu alan boş bırakılamaz'),
 });
 
 export default function SignUp() {
@@ -41,7 +42,22 @@ export default function SignUp() {
       validationSchema={SignUpSchema}
       onSubmit={(values, actions) => {
         actions.resetForm();
-        console.log(values);
+        auth()
+          .createUserWithEmailAndPassword(values.email, values.password)
+          .then(() => {
+            console.log('User account created & signed in!');
+          })
+          .catch(error => {
+            if (error.code === 'auth/email-already-in-use') {
+              console.log('That email address is already in use!');
+            }
+
+            if (error.code === 'auth/invalid-email') {
+              console.log('That email address is invalid!');
+            }
+
+            console.error(error);
+          });
       }}>
       {({handleChange, handleBlur, handleSubmit, values, touched, errors}) => (
         <ScrollView style={styles.container}>
@@ -123,7 +139,7 @@ const styles = StyleSheet.create({
     width: 90,
     height: 90,
     alignSelf: 'center',
-    margin: "2%",
+    margin: '2%',
   },
   textinputcontainer: {
     flex: 2,
@@ -132,7 +148,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#ecf0f1',
     paddingHorizontal: '3%',
     paddingVertical: '2%',
-    justifyContent: 'space-around'
+    justifyContent: 'space-around',
+    borderRadius: 10,
   },
   textinput: {
     borderRadius: 10,
@@ -151,6 +168,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: '#1ba1e2',
     margin: 15,
+    borderRadius: 10,
+    height: '70%',
   },
   text: {
     color: '#E0E0E0',
@@ -165,6 +184,6 @@ const styles = StyleSheet.create({
     fontSize: 10,
     fontFamily: 'Avenir-Medium',
     color: 'red',
-    marginLeft: "3%",
+    marginLeft: '3%',
   },
 });

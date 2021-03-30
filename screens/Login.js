@@ -1,8 +1,9 @@
-import React from 'react';
-import {StyleSheet, View, TextInput, ScrollView} from 'react-native';
+import React, { useReducer } from 'react';
+import {StyleSheet, View, TextInput, ScrollView, Alert} from 'react-native';
 import {Button, Text} from 'native-base';
 import {Formik} from 'formik';
 import * as yup from 'yup';
+import auth from '@react-native-firebase/auth';
 
 const LoginSchema = yup.object().shape({
   email: yup
@@ -25,8 +26,16 @@ export default function SignUp() {
       }}
       validationSchema={LoginSchema}
       onSubmit={(values, actions) => {
-        actions.resetForm();
-        console.log(values);
+        auth()
+          .signInWithEmailAndPassword(values.email, values.password)
+          .then(() => {
+          })
+          .catch(error => {
+              setTimeout(() => {
+                Alert.alert("Kullanıcı bilgileri yanlış. Lütfen tekrar deneyiniz.");
+              },100) ;
+          });
+          actions.resetForm();
       }}>
       {({handleChange, handleBlur, handleSubmit, values, touched, errors}) => (
         <ScrollView style={styles.container}>
@@ -81,6 +90,7 @@ const styles = StyleSheet.create({
     paddingVertical: '2%',
     justifyContent: 'space-around',
     marginTop: '5%',
+    borderRadius: 10,
   },
   textinput: {
     borderRadius: 10,
@@ -99,6 +109,7 @@ const styles = StyleSheet.create({
   button: {
     justifyContent: 'center',
     backgroundColor: '#1ba1e2',
+    borderRadius: 10,
   },
   text: {
     color: '#E0E0E0',
