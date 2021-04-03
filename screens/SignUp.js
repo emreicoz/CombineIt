@@ -1,9 +1,65 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {StyleSheet, View, TextInput, ScrollView} from 'react-native';
-import {Button, Label, Text} from 'native-base';
+import {Button, Toast, Text, Root} from 'native-base';
 import {Formik} from 'formik';
 import * as yup from 'yup';
 import auth from '@react-native-firebase/auth';
+import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
+import {TouchableOpacity,TouchableWithoutFeedback} from 'react-native';
+import {Modal} from 'react-native';
+
+const launchCam = () => {
+  let options = {
+    storageOptions: {
+      skipBackup: true,
+      path: 'images',
+    },
+  };
+  launchCamera(options, response => {
+    console.log('Response = ', response);
+
+    if (response.didCancel) {
+      console.log('User cancelled image picker');
+    } else if (response.error) {
+      console.log('ImagePicker Error: ', response.error);
+    } else if (response.customButton) {
+      console.log('User tapped custom button: ', response.customButton);
+      alert(response.customButton);
+    } else {
+      const source = {uri: response.uri};
+      console.log('response', JSON.stringify(response));
+    }
+  });
+};
+
+const launchImageLib = () => {
+  let options = {
+    storageOptions: {
+      skipBackup: true,
+      path: 'images',
+    },
+  };
+  launchImageLibrary(options, response => {
+    console.log('Response = ', response);
+
+    if (response.didCancel) {
+      console.log('User cancelled image picker');
+    } else if (response.error) {
+      console.log('ImagePicker Error: ', response.error);
+    } else if (response.customButton) {
+      console.log('User tapped custom button: ', response.customButton);
+      alert(response.customButton);
+    } else {
+      const source = {uri: response.uri};
+      console.log('response', JSON.stringify(response));
+      this.setState({
+        filePath: response,
+        fileData: response.data,
+        fileUri: response.uri,
+      });
+    }
+  });
+};
 
 const SignUpSchema = yup.object().shape({
   nameSurname: yup
@@ -30,6 +86,7 @@ const SignUpSchema = yup.object().shape({
 });
 
 export default function SignUp() {
+  const [modalVisible, setModalVisible] = useState(false);
   return (
     <Formik
       initialValues={{
@@ -49,79 +106,105 @@ export default function SignUp() {
           })
           .catch(error => {
             if (error.code === 'auth/email-already-in-use') {
-              console.log('That email address is already in use!');
+              Toast.show({
+                text: 'Bu E posta adresi zaten kullanımda !',
+                type: 'warning',
+              });
             }
-
-            if (error.code === 'auth/invalid-email') {
-              console.log('That email address is invalid!');
-            }
-
-            console.error(error);
           });
       }}>
       {({handleChange, handleBlur, handleSubmit, values, touched, errors}) => (
-        <ScrollView style={styles.container}>
-          <View style={styles.profile}></View>
-          <View style={styles.textinputcontainer}>
-            <TextInput
-              placeholder="Ad Soyad"
-              style={styles.textinput}
-              onChangeText={handleChange('nameSurname')}
-              onBlur={handleBlur('nameSurname')}
-              value={values.nameSurname}></TextInput>
-            <Text style={styles.errorTitle}>
-              {touched.nameSurname && errors.nameSurname}
-            </Text>
-            <TextInput
-              placeholder="Kullanıcı Adı"
-              style={styles.textinput}
-              onChangeText={handleChange('userName')}
-              onBlur={handleBlur('userName')}
-              value={values.userName}></TextInput>
-            <Text style={styles.errorTitle}>
-              {touched.userName && errors.userName}
-            </Text>
-            <TextInput
-              placeholder="E-Posta"
-              style={styles.textinput}
-              onChangeText={handleChange('email')}
-              onBlur={handleBlur('email')}
-              value={values.email}></TextInput>
-            <Text style={styles.errorTitle}>
-              {touched.email && errors.email}
-            </Text>
-            <TextInput
-              placeholder="Şifre"
-              style={styles.textinput}
-              onChangeText={handleChange('password')}
-              onBlur={handleBlur('password')}
-              value={values.password}
-              secureTextEntry={true}></TextInput>
-            <Text style={styles.errorTitle}>
-              {touched.password && errors.password}
-            </Text>
-            <TextInput
-              placeholder="Şifre Tekrar"
-              style={styles.textinput}
-              onChangeText={handleChange('confirmPassword')}
-              onBlur={handleBlur('confirmPassword')}
-              value={values.confirmPassword}
-              secureTextEntry={true}></TextInput>
-            <Text style={styles.errorTitle}>
-              {touched.confirmPassword && errors.confirmPassword}
-            </Text>
-          </View>
-          <View style={styles.buttoncontainer}>
-            <Button
-              title="Submit"
-              block
-              rounded
-              style={styles.button}
-              onPress={handleSubmit}>
-              <Text style={styles.text}>Kayıt Ol</Text>
-            </Button>
-          </View>
-        </ScrollView>
+        <Root>
+          <ScrollView style={styles.container}>
+            <TouchableOpacity
+              style={styles.profile}
+              onPress={() => setModalVisible(true)}></TouchableOpacity>
+            <Modal
+              animationType="fade"
+              transparent={true}
+              visible={modalVisible}
+              onRequestClose={() => {
+                setModalVisible(!modalVisible);
+              }}>
+              <View style= {{backgroundColor:"#000000aa", flex:1}}>
+                <TouchableOpacity style={{ flex:1}} onPress={()=> setModalVisible(false)}>
+                  <TouchableWithoutFeedback>
+                <View style={styles.modal}>
+                  <TouchableOpacity onPress={launchCam}>
+                    <Text>Kamerayı Kullan</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity onPress={launchImageLib}>
+                    <Text>Galeriden Seç</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity onPress={() => setModalVisible(false)}>
+                    <Text>İptal</Text>
+                  </TouchableOpacity>
+                </View>
+                </TouchableWithoutFeedback>
+                </TouchableOpacity>
+              </View>
+            </Modal>
+            <View style={styles.textinputcontainer}>
+              <TextInput
+                placeholder="Ad Soyad"
+                style={styles.textinput}
+                onChangeText={handleChange('nameSurname')}
+                onBlur={handleBlur('nameSurname')}
+                value={values.nameSurname}></TextInput>
+              <Text style={styles.errorTitle}>
+                {touched.nameSurname && errors.nameSurname}
+              </Text>
+              <TextInput
+                placeholder="Kullanıcı Adı"
+                style={styles.textinput}
+                onChangeText={handleChange('userName')}
+                onBlur={handleBlur('userName')}
+                value={values.userName}></TextInput>
+              <Text style={styles.errorTitle}>
+                {touched.userName && errors.userName}
+              </Text>
+              <TextInput
+                placeholder="E-Posta"
+                style={styles.textinput}
+                onChangeText={handleChange('email')}
+                onBlur={handleBlur('email')}
+                value={values.email}></TextInput>
+              <Text style={styles.errorTitle}>
+                {touched.email && errors.email}
+              </Text>
+              <TextInput
+                placeholder="Şifre"
+                style={styles.textinput}
+                onChangeText={handleChange('password')}
+                onBlur={handleBlur('password')}
+                value={values.password}
+                secureTextEntry={true}></TextInput>
+              <Text style={styles.errorTitle}>
+                {touched.password && errors.password}
+              </Text>
+              <TextInput
+                placeholder="Şifre Tekrar"
+                style={styles.textinput}
+                onChangeText={handleChange('confirmPassword')}
+                onBlur={handleBlur('confirmPassword')}
+                value={values.confirmPassword}
+                secureTextEntry={true}></TextInput>
+              <Text style={styles.errorTitle}>
+                {touched.confirmPassword && errors.confirmPassword}
+              </Text>
+            </View>
+            <View style={styles.buttoncontainer}>
+              <Button
+                title="Submit"
+                block
+                rounded
+                style={styles.button}
+                onPress={handleSubmit}>
+                <Text style={styles.text}>Kayıt Ol</Text>
+              </Button>
+            </View>
+          </ScrollView>
+        </Root>
       )}
     </Formik>
   );
@@ -185,5 +268,13 @@ const styles = StyleSheet.create({
     fontFamily: 'Avenir-Medium',
     color: 'red',
     marginLeft: '3%',
+  },
+  modal: {
+    marginVertical: '50%',
+    marginHorizontal: '25%',
+    backgroundColor: 'white',
+    borderRadius: 20,
+    padding: 35,
+    alignItems: 'center',
   },
 });
