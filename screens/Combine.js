@@ -1,5 +1,5 @@
 import React from 'react';
-import {View} from 'react-native';
+import {View, Image} from 'react-native';
 import {Text} from 'native-base';
 
 export default function Combine () {
@@ -8,6 +8,7 @@ export default function Combine () {
             <Text>
                 Kombin sayfası.
             </Text>
+            
         </View>
     )
 }

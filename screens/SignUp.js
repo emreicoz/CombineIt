@@ -1,65 +1,13 @@
 import React, {useEffect, useState} from 'react';
-import {StyleSheet, View, TextInput, ScrollView} from 'react-native';
+import {StyleSheet, View, TextInput, ScrollView, Image} from 'react-native';
 import {Button, Toast, Text, Root} from 'native-base';
 import {Formik} from 'formik';
 import * as yup from 'yup';
 import auth from '@react-native-firebase/auth';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
-import {TouchableOpacity,TouchableWithoutFeedback} from 'react-native';
-import {Modal} from 'react-native';
-
-const launchCam = () => {
-  let options = {
-    storageOptions: {
-      skipBackup: true,
-      path: 'images',
-    },
-  };
-  launchCamera(options, response => {
-    console.log('Response = ', response);
-
-    if (response.didCancel) {
-      console.log('User cancelled image picker');
-    } else if (response.error) {
-      console.log('ImagePicker Error: ', response.error);
-    } else if (response.customButton) {
-      console.log('User tapped custom button: ', response.customButton);
-      alert(response.customButton);
-    } else {
-      const source = {uri: response.uri};
-      console.log('response', JSON.stringify(response));
-    }
-  });
-};
-
-const launchImageLib = () => {
-  let options = {
-    storageOptions: {
-      skipBackup: true,
-      path: 'images',
-    },
-  };
-  launchImageLibrary(options, response => {
-    console.log('Response = ', response);
-
-    if (response.didCancel) {
-      console.log('User cancelled image picker');
-    } else if (response.error) {
-      console.log('ImagePicker Error: ', response.error);
-    } else if (response.customButton) {
-      console.log('User tapped custom button: ', response.customButton);
-      alert(response.customButton);
-    } else {
-      const source = {uri: response.uri};
-      console.log('response', JSON.stringify(response));
-      this.setState({
-        filePath: response,
-        fileData: response.data,
-        fileUri: response.uri,
-      });
-    }
-  });
-};
+import {TouchableOpacity, TouchableWithoutFeedback, Modal} from 'react-native';
+import firestore from '@react-native-firebase/firestore';
+import ImagePickerModal from '../elements/ImagePickerModal';
 
 const SignUpSchema = yup.object().shape({
   nameSurname: yup
@@ -87,6 +35,53 @@ const SignUpSchema = yup.object().shape({
 
 export default function SignUp() {
   const [modalVisible, setModalVisible] = useState(false);
+  const [profilePict, setProfilePict] = useState();
+
+  const launchCam = () => {
+    let options = {
+      storageOptions: {
+        skipBackup: true,
+        path: 'images',
+      },
+    };
+    launchCamera(options, response => {
+      console.log('Response = ', response);
+
+      if (response.didCancel) {
+        console.log('User cancelled image picker');
+      } else if (response.error) {
+        console.log('ImagePicker Error: ', response.error);
+      } else if (response.customButton) {
+        console.log('User tapped custom button: ', response.customButton);
+        alert(response.customButton);
+      } else {
+        setProfilePict(response);
+        setModalVisible(false);
+      }
+    });
+  };
+  const launchImageLib = () => {
+    let options = {
+      storageOptions: {
+        skipBackup: true,
+        path: 'images',
+      },
+    };
+    launchImageLibrary(options, response => {
+      console.log('Response = ', response);
+      setModalVisible(false);
+      if (response.didCancel) {
+        console.log('User cancelled image picker');
+      } else if (response.error) {
+        console.log('ImagePicker Error: ', response.error);
+      } else if (response.customButton) {
+        console.log('User tapped custom button: ', response.customButton);
+        alert(response.customButton);
+      } else {
+        setProfilePict(response);
+      }
+    });
+  };
   return (
     <Formik
       initialValues={{
@@ -103,6 +98,17 @@ export default function SignUp() {
           .createUserWithEmailAndPassword(values.email, values.password)
           .then(() => {
             console.log('User account created & signed in!');
+            firestore()
+              .collection('users')
+              .add({
+                nameSurname: values.nameSurname,
+                userName: values.userName,
+                email: values.email,
+                profilePicture: profilePict.uri,
+              })
+              .then(() => {
+                console.log('User added!');
+              });
           })
           .catch(error => {
             if (error.code === 'auth/email-already-in-use') {
@@ -118,32 +124,19 @@ export default function SignUp() {
           <ScrollView style={styles.container}>
             <TouchableOpacity
               style={styles.profile}
-              onPress={() => setModalVisible(true)}></TouchableOpacity>
-            <Modal
-              animationType="fade"
-              transparent={true}
-              visible={modalVisible}
-              onRequestClose={() => {
-                setModalVisible(!modalVisible);
-              }}>
-              <View style= {{backgroundColor:"#000000aa", flex:1}}>
-                <TouchableOpacity style={{ flex:1}} onPress={()=> setModalVisible(false)}>
-                  <TouchableWithoutFeedback>
-                <View style={styles.modal}>
-                  <TouchableOpacity onPress={launchCam}>
-                    <Text>Kamerayı Kullan</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity onPress={launchImageLib}>
-                    <Text>Galeriden Seç</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity onPress={() => setModalVisible(false)}>
-                    <Text>İptal</Text>
-                  </TouchableOpacity>
-                </View>
-                </TouchableWithoutFeedback>
-                </TouchableOpacity>
-              </View>
-            </Modal>
+              onPress={() => setModalVisible(true)}>
+              <Image
+                source={
+                  profilePict
+                    ? {
+                        uri: profilePict.uri,
+                      }
+                    : require('../images/profile.png')
+                }
+                style={{width: 90, height: 90, borderRadius: 20}}
+              />
+            </TouchableOpacity>
+            <ImagePickerModal modalVisible={modalVisible} setModalVisible={setModalVisible} launchCam={launchCam} launchImageLib={launchImageLib} />
             <View style={styles.textinputcontainer}>
               <TextInput
                 placeholder="Ad Soyad"
@@ -218,7 +211,7 @@ const styles = StyleSheet.create({
   profile: {
     flex: 1,
     backgroundColor: '#95a5a6',
-    borderRadius: 80,
+    borderRadius: 20,
     width: 90,
     height: 90,
     alignSelf: 'center',
