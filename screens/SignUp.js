@@ -5,7 +5,7 @@ import {Formik} from 'formik';
 import * as yup from 'yup';
 import auth from '@react-native-firebase/auth';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
-import {TouchableOpacity, TouchableWithoutFeedback, Modal} from 'react-native';
+import {TouchableOpacity,} from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import ImagePickerModal from '../elements/ImagePickerModal';
 
@@ -96,11 +96,12 @@ export default function SignUp() {
         actions.resetForm();
         auth()
           .createUserWithEmailAndPassword(values.email, values.password)
-          .then(() => {
+          .then((cred) => {
             console.log('User account created & signed in!');
             firestore()
               .collection('users')
-              .add({
+              .doc(cred.user.uid)
+              .set({
                 nameSurname: values.nameSurname,
                 userName: values.userName,
                 email: values.email,
@@ -216,6 +217,7 @@ const styles = StyleSheet.create({
     height: 90,
     alignSelf: 'center',
     margin: '2%',
+    borderColor: "gray"
   },
   textinputcontainer: {
     flex: 2,
@@ -261,13 +263,5 @@ const styles = StyleSheet.create({
     fontFamily: 'Avenir-Medium',
     color: 'red',
     marginLeft: '3%',
-  },
-  modal: {
-    marginVertical: '50%',
-    marginHorizontal: '25%',
-    backgroundColor: 'white',
-    borderRadius: 20,
-    padding: 35,
-    alignItems: 'center',
   },
 });

@@ -29,10 +29,6 @@ export default function SignUp() {
         auth()
           .signInWithEmailAndPassword(values.email, values.password)
           .then(() => {
-            Toast.show({
-              text: "Kayıt başarılı ana sayfaya yönlendiriliyorsunuz.",
-              type: "success",
-            })
           })
           .catch(error => {
             Toast.show({
