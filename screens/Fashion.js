@@ -1,5 +1,5 @@
 import React from 'react';
-import {ScrollView} from 'react-native';
+import {ScrollView, Text} from 'react-native';
 import PostCard from '../elements/PostCard';
 
 export default function Fashion() {

@@ -10,9 +10,9 @@ import {UserContext} from '../elements/UserContext';
 export default function Profile() {
   const count = 15;
   const {user} = useContext(UserContext);
-
   console.log('Profile tarafı:' + user);
   return (
+    
     <View style={styles.container}>
       <View style={styles.profileInfo}>
         <View style={styles.profilePicture}>
@@ -22,8 +22,8 @@ export default function Profile() {
             }}
             style={{width: 80, height: 80, borderRadius: 45}}></Image>
         </View>
-        <Text style={styles.profileText}>{user && user?.nameSurname}</Text>
-        <Text style={styles.subText}>{user && user?.userName}</Text>
+        <Text style={styles.profileText}>{user && user?.nameSurname || "Deneme Kişisi"}</Text>
+        <Text style={styles.subText}>{user && user?.userName || "denemekisisi"}</Text>
       </View>
 
       <Tabs
@@ -38,7 +38,7 @@ export default function Profile() {
         // onChangeIndex={(newIndex) => {}} // react on index change
         //showLeadingSpace={false} //  (default=true) show leading space in scrollable tabs inside the header
       >
-        <TabScreen label="Kıyafet">
+        <TabScreen label={"Kıyafet"}>
           <WardrobeScreen />
         </TabScreen>
         <TabScreen label={count + "Kombin"}>
@@ -59,7 +59,7 @@ const styles = StyleSheet.create({
   profileInfo: {
     backgroundColor: '#95a4b5',
     alignItems: 'center',
-    padding: '4%',
+    padding: '2%',
   },
   profilePicture: {
     backgroundColor: '#95a5a6',
@@ -69,12 +69,10 @@ const styles = StyleSheet.create({
   },
   profileText: {
     fontSize: 15,
-    color: '#2f5d62',
-    fontWeight: '200',
+    color: '#212121',
   },
   subText: {
-    fontWeight: '300',
     fontSize: 15,
-    color: '#4f7f84',
+    color: '#6a6a6a',
   },
 });

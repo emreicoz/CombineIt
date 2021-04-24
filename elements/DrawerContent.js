@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import {View, StyleSheet} from 'react-native';
 import {
   useTheme,
@@ -14,6 +14,7 @@ import {
 import {DrawerContentScrollView, DrawerItem} from '@react-navigation/drawer';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import auth from '@react-native-firebase/auth';
+import {UserContext} from '../elements/UserContext';
 
 function signingOut() {
   auth()
@@ -24,38 +25,40 @@ function signingOut() {
 export function DrawerContent(props) {
   const paperTheme = useTheme();
   const {toggleTheme} = React.useState();
+  const {user} = useContext(UserContext);
   return (
     <View style={{flex: 1}}>
       <DrawerContentScrollView {...props}>
         <View style={styles.drawerContent}>
           <View style={styles.userInfoSection}>
-            <View style={{flexDirection: 'row', marginTop: 15, paddingLeft: 15,}}>
+            <View
+              style={{flexDirection: 'row', marginTop: 15, paddingLeft: 15}}>
               <Avatar.Image
-                source={require('../images/profile.png')}
+                source={{uri: user && user?.profilePicture}}
                 size={50}
               />
               <View style={{marginLeft: 15, flexDirection: 'column'}}>
-                <Title style={styles.title}>Deneme Kişisi</Title>
-                <Caption style={styles.caption}>@denemekisisi</Caption>
+                <Title style={styles.title}>{user && user?.nameSurname || "Deneme Kişisi"}</Title>
+                <Caption style={styles.caption}>{user && user?.userName || "@denemekisisi"}</Caption>
               </View>
             </View>
 
             <View style={styles.row}>
               <View style={styles.section}>
                 <Paragraph style={[styles.paragraph, styles.caption]}>
-                  80
+                  8
                 </Paragraph>
                 <Caption style={styles.caption}>Kıyafet</Caption>
               </View>
               <View style={styles.section}>
                 <Paragraph style={[styles.paragraph, styles.caption]}>
-                  100
+                  0
                 </Paragraph>
                 <Caption style={styles.caption}>Kombin</Caption>
               </View>
               <View style={styles.section}>
                 <Paragraph style={[styles.paragraph, styles.caption]}>
-                  100
+                  0
                 </Paragraph>
                 <Caption style={styles.caption}>Takip</Caption>
               </View>
@@ -97,8 +100,8 @@ export function DrawerContent(props) {
                 toggleTheme();
               }}>
               <View style={styles.preference}>
-                <Icon name= 'weather-night' size={20} color={"#656566"}/>
-                <Text style={{color: "#727273"}} >Gece Modu</Text>
+                <Icon name="weather-night" size={20} color={'#656566'} />
+                <Text style={{color: '#727273'}}>Gece Modu</Text>
                 <View pointerEvents="none">
                   <Switch value={paperTheme.dark} />
                 </View>
@@ -126,8 +129,7 @@ const styles = StyleSheet.create({
   drawerContent: {
     flex: 1,
   },
-  userInfoSection: {
-  },
+  userInfoSection: {},
   title: {
     fontSize: 16,
     marginTop: 3,

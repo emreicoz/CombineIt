@@ -12,7 +12,7 @@ import ImagePickerModal from '../elements/ImagePickerModal';
 const SignUpSchema = yup.object().shape({
   nameSurname: yup
     .string()
-    .min(3, 'Ad Soyad 4 karakterden küçük olamaz.')
+    .min(3, 'Ad Soyad 3 karakterden küçük olamaz.')
     .required('Bu alan boş bırakılamaz'),
   userName: yup
     .string()

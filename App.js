@@ -1,7 +1,11 @@
 import 'react-native-gesture-handler';
 import React, {useState, useEffect, useMemo, useLayoutEffect} from 'react';
 import {Text, ActivityIndicator} from 'react-native';
-import {DrawerActions, NavigationContainer} from '@react-navigation/native';
+import {
+  DrawerActions,
+  NavigationContainer,
+  useRoute,
+} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import MainScreen from './screens/Main';
 import LoginScreen from './screens/Login';
@@ -10,6 +14,7 @@ import WardrobeScreen from './screens/Wardrobe';
 import CombineScreen from './screens/Combine';
 import FashionScreen from './screens/Fashion';
 import ProfileScreen from './screens/Profile';
+import NewClotheScreen from './screens/NewClothe';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import auth from '@react-native-firebase/auth';
 import {createDrawerNavigator} from '@react-navigation/drawer';
@@ -18,7 +23,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import {Provider as PaperProvider} from 'react-native-paper';
 import {UserContext} from './elements/UserContext';
 import firestore from '@react-native-firebase/firestore';
-import { DrawerContent } from './elements/DrawerContent';
+import {DrawerContent} from './elements/DrawerContent';
 
 const AuthStack = createStackNavigator();
 const AuthStackScreens = () => (
@@ -60,6 +65,13 @@ const AuthStackScreens = () => (
     />
   </AuthStack.Navigator>
 );
+const WardrobeStack = createStackNavigator();
+const WardrobeStackScreens = () => (
+  <WardrobeStack.Navigator screenOptions={{headerShown: false}} >
+    <WardrobeStack.Screen name="Wardrobe" component={WardrobeScreen} />
+    <WardrobeStack.Screen name="NewClothe" component={NewClotheScreen} tabBarOptions = {{tabBarVisible : false}}/>
+  </WardrobeStack.Navigator>
+);
 const AppTab = createMaterialTopTabNavigator();
 const AppTabScreens = () => (
   <AppTab.Navigator
@@ -78,9 +90,10 @@ const AppTabScreens = () => (
     shifting={true}>
     <AppTab.Screen
       name="Wardrobe"
-      component={WardrobeScreen}
+      customtitle="Gardırop"
+      component={WardrobeStackScreens}
       options={
-        (route => ({title: route.params.name}),
+        (route => ({title: route.params.customtitle}),
         {
           tabBarLabel: () => <Text style={{fontSize: 10}}> Gardırop </Text>,
           tabBarIcon: ({color}) => (
@@ -92,6 +105,7 @@ const AppTabScreens = () => (
     />
     <AppTab.Screen
       name="Combine"
+      customtitle="Moda"
       component={CombineScreen}
       options={{
         tabBarLabel: () => <Text style={{fontSize: 10}}> Kombin </Text>,
@@ -103,6 +117,7 @@ const AppTabScreens = () => (
     />
     <AppTab.Screen
       name="Fashion"
+      customtitle="Moda"
       component={FashionScreen}
       options={{
         tabBarLabel: () => <Text style={{fontSize: 10}}> Moda </Text>,
@@ -116,9 +131,11 @@ const AppTabScreens = () => (
 );
 const AppDrawer = createDrawerNavigator();
 const AppDrawerScreens = () => (
-  <AppDrawer.Navigator drawerStyle={{
-    width:"60%",
-  }} drawerContent={props => <DrawerContent { ... props}/> }>
+  <AppDrawer.Navigator
+    drawerStyle={{
+      width: '60%',
+    }}
+    drawerContent={props => <DrawerContent {...props} />}>
     <AppDrawer.Screen
       name="Home"
       component={AppTabScreens}
@@ -139,6 +156,7 @@ const AppDrawerScreens = () => (
       component={ProfileScreen}
       options={{
         headerShown: true,
+        headerTitle: 'Profil',
         headerTitleAlign: 'center',
         headerTitleStyle: {
           fontSize: 16,
@@ -166,14 +184,14 @@ export default function App() {
     const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
     return subscriber;
   }, []);
-  /*useEffect(() => {
+  useEffect(() => {
     const getUser = async () => {
       try {
         const userDoc = await firestore()
           .collection('users')
-          .doc(userid.uid)
+          .doc(userid? userid.uid: null)
           .get();
-          console.log("Çalışma pls")
+        console.log('Çalışma pls');
 
         const userData = userDoc.data();
         setUser(userData);
@@ -183,7 +201,7 @@ export default function App() {
     };
     getUser();
     console.log(user);
-  }, [userid]);*/
+  }, [userid]);
 
   if (initializing) return null;
   return (
