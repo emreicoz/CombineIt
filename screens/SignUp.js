@@ -8,6 +8,7 @@ import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import {TouchableOpacity,} from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import ImagePickerModal from '../elements/ImagePickerModal';
+import storage from '@react-native-firebase/storage';
 
 const SignUpSchema = yup.object().shape({
   nameSurname: yup
@@ -36,6 +37,7 @@ const SignUpSchema = yup.object().shape({
 export default function SignUp() {
   const [modalVisible, setModalVisible] = useState(false);
   const [profilePict, setProfilePict] = useState();
+  const reference = storage().ref('profilePicture.png');
 
   const launchCam = () => {
     let options = {
@@ -96,8 +98,9 @@ export default function SignUp() {
         actions.resetForm();
         auth()
           .createUserWithEmailAndPassword(values.email, values.password)
-          .then((cred) => {
+          .then(async (cred) => {
             console.log('User account created & signed in!');
+            await reference.putFile(profilePict);
             firestore()
               .collection('users')
               .doc(cred.user.uid)

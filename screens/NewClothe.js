@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import ImagePickerModal from '../elements/ImagePickerModal';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
+import {Picker} from 'native-base';
 
 export default function NewClothe() {
   const [modalVisible, setModalVisible] = useState(false);
@@ -100,6 +101,7 @@ export default function NewClothe() {
   ];
   const [selectedColor, setSelectedColor] = useState('#fff');
   const [colorModalVisible, setColorModalVisible] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState('key2');
 
   return (
     <View style={styles.container}>
@@ -179,7 +181,48 @@ export default function NewClothe() {
               }}></View>
           </TouchableOpacity>
         </View>
+        <View style={styles.attribute}>
+          <Text>Kategori: </Text>
+          <Picker
+            style={{maxWidth: 150, height: 40}}
+            mode="dropdown"
+            selectedValue={selectedCategory}
+            onValueChange={(itemValue, itemIndex) =>
+              setSelectedCategory(itemValue)
+            }>
+            <Picker.Item label="Tişört" value="tshirt" />
+            <Picker.Item label="Ceket" value="jacket" />
+            <Picker.Item label="Pantolon" value="panth" />
+          </Picker>
+        </View>
+        <View style={styles.attribute}>
+          <Text>Mevsimlik Tercih: </Text>
+          <Picker
+            style={{maxWidth: 150, height: 40}}
+            mode="dropdown"
+            selectedValue={selectedCategory}
+            onValueChange={(itemValue, itemIndex) =>
+              setSelectedCategory(itemValue)
+            }>
+            <Picker.Item label="İlkbahar" value="spring" />
+            <Picker.Item label="Yaz" value="summer" />
+            <Picker.Item label="Sonbahar" value="autumn" />
+            <Picker.Item label="Kış" value="winter" />
+          </Picker>
+        </View>
       </View>
+      <TouchableOpacity
+        style={{
+          alignSelf: 'center',
+          backgroundColor: 'tomato',
+          borderRadius: 50,
+          width: 80,
+          height: 40,
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}>
+        <Text>Ekle</Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -200,8 +243,14 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     borderColor: 'gray',
   },
+  attributes: {
+    padding: 15,
+    alignContent: 'flex-end',
+  },
   attribute: {
     flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
   modal: {
     marginVertical: '50%',
