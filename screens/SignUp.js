@@ -1,11 +1,11 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {StyleSheet, View, TextInput, ScrollView, Image} from 'react-native';
 import {Button, Toast, Text, Root} from 'native-base';
 import {Formik} from 'formik';
 import * as yup from 'yup';
 import auth from '@react-native-firebase/auth';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
-import {TouchableOpacity,} from 'react-native';
+import {TouchableOpacity} from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import ImagePickerModal from '../elements/ImagePickerModal';
 import storage from '@react-native-firebase/storage';
@@ -36,9 +36,8 @@ const SignUpSchema = yup.object().shape({
 
 export default function SignUp() {
   const [modalVisible, setModalVisible] = useState(false);
-  const [profilePict, setProfilePict] = useState();
-  const reference = storage().ref('profilePicture.png');
-
+  const [profilePict, setProfilePict] = useState(null);
+  const imageRef = storage().ref('/profilePicture.png');
   const launchCam = () => {
     let options = {
       storageOptions: {
@@ -94,25 +93,20 @@ export default function SignUp() {
         confirmPassword: '',
       }}
       validationSchema={SignUpSchema}
-      onSubmit={(values, actions) => {
+      onSubmit={async (values, actions) => {
         actions.resetForm();
-        auth()
+        const uploadImage = async () => {
+          await imageRef.putFile(profilePict.uri);
+          const url = await storage()
+            .ref('profilePicture.png')
+            .getDownloadURL();
+          return url;
+        };
+        const tempurl = await uploadImage();
+        await auth()
           .createUserWithEmailAndPassword(values.email, values.password)
-          .then(async (cred) => {
+          .then(cred => {
             console.log('User account created & signed in!');
-            await reference.putFile(profilePict);
-            firestore()
-              .collection('users')
-              .doc(cred.user.uid)
-              .set({
-                nameSurname: values.nameSurname,
-                userName: values.userName,
-                email: values.email,
-                profilePicture: profilePict.uri,
-              })
-              .then(() => {
-                console.log('User added!');
-              });
           })
           .catch(error => {
             if (error.code === 'auth/email-already-in-use') {
@@ -121,6 +115,18 @@ export default function SignUp() {
                 type: 'warning',
               });
             }
+          });
+        const currentuser = auth().currentUser;
+        firestore()
+          .collection('users')
+          .doc(currentuser.uid)
+          .set({
+            nameSurname: values.nameSurname,
+            userName: values.userName,
+            email: values.email,
+            profilePicture: tempurl
+              ? tempurl
+              : 'https://www.google.com/url?sa=i&url=https%3A%2F%2Fpixabay.com%2Fvectors%2Fblank-profile-picture-mystery-man-973460%2F&psig=AOvVaw3nYiOoheQylXsev372LxOs&ust=1620296583645000&source=images&cd=vfe&ved=0CAIQjRxqFwoTCJCOsqWpsvACFQAAAAAdAAAAABAI',
           });
       }}>
       {({handleChange, handleBlur, handleSubmit, values, touched, errors}) => (
@@ -140,7 +146,12 @@ export default function SignUp() {
                 style={{width: 90, height: 90, borderRadius: 20}}
               />
             </TouchableOpacity>
-            <ImagePickerModal modalVisible={modalVisible} setModalVisible={setModalVisible} launchCam={launchCam} launchImageLib={launchImageLib} />
+            <ImagePickerModal
+              modalVisible={modalVisible}
+              setModalVisible={setModalVisible}
+              launchCam={launchCam}
+              launchImageLib={launchImageLib}
+            />
             <View style={styles.textinputcontainer}>
               <TextInput
                 placeholder="Ad Soyad"
@@ -220,7 +231,7 @@ const styles = StyleSheet.create({
     height: 90,
     alignSelf: 'center',
     margin: '2%',
-    borderColor: "gray"
+    borderColor: 'gray',
   },
   textinputcontainer: {
     flex: 2,

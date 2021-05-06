@@ -1,11 +1,7 @@
 import 'react-native-gesture-handler';
 import React, {useState, useEffect, useMemo, useLayoutEffect} from 'react';
 import {Text, ActivityIndicator} from 'react-native';
-import {
-  DrawerActions,
-  NavigationContainer,
-  useRoute,
-} from '@react-navigation/native';
+import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import MainScreen from './screens/Main';
 import LoginScreen from './screens/Login';
@@ -24,6 +20,7 @@ import {Provider as PaperProvider} from 'react-native-paper';
 import {UserContext} from './elements/UserContext';
 import firestore from '@react-native-firebase/firestore';
 import {DrawerContent} from './elements/DrawerContent';
+import {set} from 'react-native-reanimated';
 
 const AuthStack = createStackNavigator();
 const AuthStackScreens = () => (
@@ -67,9 +64,13 @@ const AuthStackScreens = () => (
 );
 const WardrobeStack = createStackNavigator();
 const WardrobeStackScreens = () => (
-  <WardrobeStack.Navigator screenOptions={{headerShown: false}} >
+  <WardrobeStack.Navigator screenOptions={{headerShown: false}}>
     <WardrobeStack.Screen name="Wardrobe" component={WardrobeScreen} />
-    <WardrobeStack.Screen name="NewClothe" component={NewClotheScreen} tabBarOptions = {{tabBarVisible : false}}/>
+    <WardrobeStack.Screen
+      name="NewClothe"
+      component={NewClotheScreen}
+      tabBarOptions={{tabBarVisible: false}}
+    />
   </WardrobeStack.Navigator>
 );
 const AppTab = createMaterialTopTabNavigator();
@@ -174,33 +175,47 @@ export default function App() {
   const [userid, setUserId] = useState(null);
   const [user, setUser] = useState(null);
   const userValue = useMemo(() => ({user, setUser}), [user, setUser]);
+  const [isLoading, setIsLoading] = useState(true);
 
   function onAuthStateChanged(user) {
     setUserId(user);
     console.log('Userid:' + user);
     if (initializing) setInitializing(false);
   }
-  useLayoutEffect(() => {
+  useEffect(() => {
     const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
     return subscriber;
   }, []);
-  useEffect(() => {
-    const getUser = async () => {
-      try {
-        const userDoc = await firestore()
-          .collection('users')
-          .doc(userid? userid.uid: null)
-          .get();
-        console.log('Çalışma pls');
 
-        const userData = userDoc.data();
-        setUser(userData);
-      } catch (error) {
-        console.log('Hata:' + error);
-      }
-    };
-    getUser();
-    console.log(user);
+  const getUser = async () => {
+    const currentUser = auth().currentUser;
+    const userDoc = await firestore()
+      .collection('users')
+      .doc(currentUser ? currentUser.uid : null)
+      .get();
+
+    if (!userDoc.exists) {
+      console.log("User not found")
+    } else {
+      const userData = userDoc.data();
+      console.log('Userdoc: ', userData);
+      setUser(userData);
+        setIsLoading(true);
+    }
+    console.log('GEtuser');
+  };
+
+  useEffect(() => {
+    if (userid) {
+      setTimeout(() => {
+        getUser();
+        console.log('User:', user);
+      }, 1000);
+    } else {
+      console.log('USerid yok');
+      setIsLoading(false);
+    }
+    return user;
   }, [userid]);
 
   if (initializing) return null;
@@ -208,7 +223,7 @@ export default function App() {
     <SafeAreaProvider>
       <PaperProvider>
         <NavigationContainer>
-          {userid ? (
+          {isLoading ? (
             <UserContext.Provider value={userValue}>
               <AppDrawerScreens />
             </UserContext.Provider>
