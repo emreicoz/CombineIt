@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   Text,
   View,
@@ -12,8 +12,11 @@ import {
 import ImagePickerModal from '../elements/ImagePickerModal';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import {Picker} from 'native-base';
+import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
+import storage from '@react-native-firebase/storage';
 
-export default function NewClothe() {
+export default function NewClothe({navigation}) {
   const [modalVisible, setModalVisible] = useState(false);
   const [profilePict, setProfilePict] = useState();
   const launchCam = () => {
@@ -99,9 +102,71 @@ export default function NewClothe() {
       color: '#acd',
     },
   ];
-  const [selectedColor, setSelectedColor] = useState('#fff');
   const [colorModalVisible, setColorModalVisible] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState('key2');
+  const [clothe, setClothe] = useState({
+    id: '0',
+    color: '#fff',
+    category: 'Ceket',
+    season: 'İlkbahar',
+    topCategory: '',
+  });
+  useEffect(() => {
+    var date = new Date().getDate(); //Current Date
+    var month = new Date().getMonth() + 1; //Current Month
+    var year = new Date().getFullYear(); //Current Year
+    var hours = new Date().getHours(); //Current Hours
+    var min = new Date().getMinutes(); //Current Minutes
+    var sec = new Date().getSeconds(); //Current Seconds
+    var uniqueid =
+      date + '' + month + '' + year + '' + hours + '' + min + '' + sec;
+    setClothe({...clothe, id: uniqueid});
+    console.log('DAte effect çalıştı');
+  }, [profilePict]);
+
+  const uploadClothe = async () => {
+    const currentuser = auth().currentUser;
+    const imageRef = storage().ref(
+      'users/' + currentuser.uid + '/clothes/' + clothe.id + '.png',
+    );
+    const uploadImage = async () => {
+      await imageRef.putFile(profilePict.uri);
+      const url = await imageRef.getDownloadURL();
+      return url;
+    };
+    function getBodyPart() {  
+      if(clothe.category == "Ceket"){
+        clothe.topCategory = "Dış Giyim"
+      }else if(clothe.category == "Gömlek" || clothe.category == "Kazak" || clothe.category == "Tişört"){
+        clothe.topCategory = "Üst Giyim";
+      }else if (clothe.category == "Etek" || clothe.category == "Pantolon" || clothe.category == "Şort"){
+        clothe.topCategory = "Alt Giyim";
+      }else if (clothe.category == "Bot" || clothe.category == "Sandalet" || clothe.category == "Spor Ayakkabı"){
+        clothe.topCategory = "Ayakkabı";
+      }else if (clothe.category == "Çanta"){
+        clothe.topCategory = "Aksesuar";
+      }else if(clothe.category == "Elbise"){
+        clothe.topCategory = "Tüm Giyim"
+      }
+    }
+    getBodyPart();
+    const tempurl = await uploadImage();
+    await firestore()
+      .collection('users')
+      .doc(currentuser.uid)
+      .collection('clothes')
+      .doc()
+      .set({
+        clotheId: clothe.id,
+        clotheColor: clothe.color,
+        clotheSeason: clothe.season,
+        clotheCategory: clothe.category,
+        clotheTopCategory: clothe.topCategory,
+        clothePicture: tempurl
+          ? tempurl
+          : 'https://www.google.com/url?sa=i&url=https%3A%2F%2Fpixabay.com%2Fvectors%2Fblank-profile-picture-mystery-man-973460%2F&psig=AOvVaw3nYiOoheQylXsev372LxOs&ust=1620296583645000&source=images&cd=vfe&ved=0CAIQjRxqFwoTCJCOsqWpsvACFQAAAAAdAAAAABAI',
+      });
+    navigation.popToTop();
+  };
 
   return (
     <View style={styles.container}>
@@ -152,7 +217,7 @@ export default function NewClothe() {
                         <View style={{padding: 2}}>
                           <TouchableOpacity
                             onPress={() => {
-                              setSelectedColor(item.color);
+                              setClothe({...clothe, color: item.color});
                               setColorModalVisible(false);
                             }}>
                             <View
@@ -176,7 +241,7 @@ export default function NewClothe() {
               style={{
                 width: 30,
                 height: 30,
-                backgroundColor: selectedColor,
+                backgroundColor: clothe.color,
                 borderRadius: 50,
               }}></View>
           </TouchableOpacity>
@@ -186,13 +251,22 @@ export default function NewClothe() {
           <Picker
             style={{maxWidth: 150, height: 40}}
             mode="dropdown"
-            selectedValue={selectedCategory}
+            selectedValue=""
             onValueChange={(itemValue, itemIndex) =>
-              setSelectedCategory(itemValue)
+              setClothe({...clothe, category: itemValue})
             }>
-            <Picker.Item label="Tişört" value="tshirt" />
-            <Picker.Item label="Ceket" value="jacket" />
-            <Picker.Item label="Pantolon" value="panth" />
+            <Picker.Item label="Ceket" value="Ceket" key="4" /> 
+            <Picker.Item label="Gömlek" value="Gömlek" key="6" /> 
+            <Picker.Item label="Kazak" value="Kazak" key="2" />
+            <Picker.Item label="Tişört" value="Tişört" key="0" />
+            <Picker.Item label="Elbise" value="Elbise" key="3" /> 
+            <Picker.Item label="Etek" value="Etek" key="10" /> 
+            <Picker.Item label="Pantolon" value="Pantolon" key="1" /> 
+            <Picker.Item label="Şort" value="Şort" key="11" /> 
+            <Picker.Item label="Bot" value="Bot" key="9" /> 
+            <Picker.Item label="Sandalet" value="Sandalet" key="5" /> 
+            <Picker.Item label="Spor Ayakkabı" value="Spor Ayakkabı" key="7" /> 
+            <Picker.Item label="Çanta" value="Çanta" key="8" /> 
           </Picker>
         </View>
         <View style={styles.attribute}>
@@ -200,27 +274,29 @@ export default function NewClothe() {
           <Picker
             style={{maxWidth: 150, height: 40}}
             mode="dropdown"
-            selectedValue={selectedCategory}
+            selectedValue="spring"
             onValueChange={(itemValue, itemIndex) =>
-              setSelectedCategory(itemValue)
+              setClothe({...clothe, season: itemValue})
             }>
-            <Picker.Item label="İlkbahar" value="spring" />
-            <Picker.Item label="Yaz" value="summer" />
-            <Picker.Item label="Sonbahar" value="autumn" />
-            <Picker.Item label="Kış" value="winter" />
+            <Picker.Item label="İlkbahar" value="İlkbahar" />
+            <Picker.Item label="Yaz" value="Yaz" />
+            <Picker.Item label="Sonbahar" value="Sonbahar" />
+            <Picker.Item label="Kış" value="Kış" />
           </Picker>
         </View>
       </View>
       <TouchableOpacity
         style={{
           alignSelf: 'center',
-          backgroundColor: 'tomato',
+          backgroundColor: profilePict ? 'tomato' : 'grey',
           borderRadius: 50,
           width: 80,
           height: 40,
           justifyContent: 'center',
           alignItems: 'center',
-        }}>
+        }}
+        onPress={uploadClothe}
+        disabled={profilePict ? false : true}>
         <Text>Ekle</Text>
       </TouchableOpacity>
     </View>

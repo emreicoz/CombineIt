@@ -3,11 +3,11 @@ import {StyleSheet, View, TextInput, ScrollView, Image} from 'react-native';
 import {Button, Toast, Text, Root} from 'native-base';
 import {Formik} from 'formik';
 import * as yup from 'yup';
-import auth from '@react-native-firebase/auth';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import {TouchableOpacity} from 'react-native';
-import firestore from '@react-native-firebase/firestore';
 import ImagePickerModal from '../elements/ImagePickerModal';
+import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage';
 
 const SignUpSchema = yup.object().shape({
@@ -37,7 +37,6 @@ const SignUpSchema = yup.object().shape({
 export default function SignUp() {
   const [modalVisible, setModalVisible] = useState(false);
   const [profilePict, setProfilePict] = useState(null);
-  const imageRef = storage().ref('/profilePicture.png');
   const launchCam = () => {
     let options = {
       storageOptions: {
@@ -95,14 +94,6 @@ export default function SignUp() {
       validationSchema={SignUpSchema}
       onSubmit={async (values, actions) => {
         actions.resetForm();
-        const uploadImage = async () => {
-          await imageRef.putFile(profilePict.uri);
-          const url = await storage()
-            .ref('profilePicture.png')
-            .getDownloadURL();
-          return url;
-        };
-        const tempurl = await uploadImage();
         await auth()
           .createUserWithEmailAndPassword(values.email, values.password)
           .then(cred => {
@@ -117,10 +108,18 @@ export default function SignUp() {
             }
           });
         const currentuser = auth().currentUser;
+        const imageRef = storage().ref('users/' + currentuser.uid + '/profilePicture.png');
+        const uploadImage = async () => {
+          await imageRef.putFile(profilePict.uri);
+          const url = await imageRef.getDownloadURL();
+          return url;
+        };
+        const tempurl = await uploadImage();
         firestore()
           .collection('users')
           .doc(currentuser.uid)
           .set({
+            userId: currentuser.uid,
             nameSurname: values.nameSurname,
             userName: values.userName,
             email: values.email,

@@ -11,6 +11,7 @@ import CombineScreen from './screens/Combine';
 import FashionScreen from './screens/Fashion';
 import ProfileScreen from './screens/Profile';
 import NewClotheScreen from './screens/NewClothe';
+import ClotheDetailScreen from './screens/ClotheDetail';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import auth from '@react-native-firebase/auth';
 import {createDrawerNavigator} from '@react-navigation/drawer';
@@ -69,6 +70,11 @@ const WardrobeStackScreens = () => (
     <WardrobeStack.Screen
       name="NewClothe"
       component={NewClotheScreen}
+      tabBarOptions={{tabBarVisible: false}}
+    />
+    <WardrobeStack.Screen
+      name="ClotheDetail"
+      component={ClotheDetailScreen}
       tabBarOptions={{tabBarVisible: false}}
     />
   </WardrobeStack.Navigator>
@@ -196,21 +202,20 @@ export default function App() {
 
     if (!userDoc.exists) {
       console.log("User not found")
+      setTimeout(getUser, 250);
     } else {
       const userData = userDoc.data();
       console.log('Userdoc: ', userData);
       setUser(userData);
-        setIsLoading(true);
+      setIsLoading(true);
     }
     console.log('GEtuser');
   };
 
   useEffect(() => {
     if (userid) {
-      setTimeout(() => {
         getUser();
         console.log('User:', user);
-      }, 1000);
     } else {
       console.log('USerid yok');
       setIsLoading(false);
