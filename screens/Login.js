@@ -1,6 +1,6 @@
 import React, { useReducer } from 'react';
 import {StyleSheet, View, TextInput, ScrollView, Alert} from 'react-native';
-import {Button, Text} from 'native-base';
+import {Button, Text, Toast, Root} from 'native-base';
 import {Formik} from 'formik';
 import * as yup from 'yup';
 import auth from '@react-native-firebase/auth';
@@ -31,13 +31,15 @@ export default function SignUp() {
           .then(() => {
           })
           .catch(error => {
-              setTimeout(() => {
-                Alert.alert("Kullanıcı bilgileri yanlış. Lütfen tekrar deneyiniz.");
-              },100) ;
+            Toast.show({
+              text: "Kullanıcı adı veya şifre yanlış !",
+              type: "warning",
+            })
           });
           actions.resetForm();
       }}>
       {({handleChange, handleBlur, handleSubmit, values, touched, errors}) => (
+        <Root>
         <ScrollView style={styles.container}>
           <View style={styles.textinputcontainer}>
             <TextInput
@@ -71,6 +73,7 @@ export default function SignUp() {
             </Button>
           </View>
         </ScrollView>
+        </Root>
       )}
     </Formik>
   );
