@@ -20,7 +20,8 @@ export default function Combine({navigation}) {
           firstParam: 'yourValue',
           secondParam: {
             lol: 'loll',
-            hoh: 'hohh'
+            hoh: 'hohh',
+            
           } 
         }),
       })
