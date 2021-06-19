@@ -1,6 +1,14 @@
-import React, { useReducer } from 'react';
-import {StyleSheet, View, TextInput, ScrollView, Alert} from 'react-native';
-import {Button, Text, Toast, Root} from 'native-base';
+import React, {useEffect, useState} from 'react';
+import {
+  StyleSheet,
+  View,
+  TextInput,
+  ScrollView,
+  ActivityIndicator,
+  Modal,
+  Text
+} from 'react-native';
+import {Button, Toast, Root} from 'native-base';
 import {Formik} from 'formik';
 import * as yup from 'yup';
 import auth from '@react-native-firebase/auth';
@@ -18,6 +26,7 @@ const LoginSchema = yup.object().shape({
 });
 
 export default function SignUp() {
+  const [isLoading, setIsLoading] = useState(false);
   return (
     <Formik
       initialValues={{
@@ -26,53 +35,58 @@ export default function SignUp() {
       }}
       validationSchema={LoginSchema}
       onSubmit={(values, actions) => {
+        setIsLoading(true);
         auth()
           .signInWithEmailAndPassword(values.email, values.password)
-          .then(() => {
-          })
+          .then(() => {})
           .catch(error => {
             Toast.show({
-              text: "Kullanıcı adı veya şifre yanlış !",
-              type: "warning",
-            })
+              text: 'Kullanıcı adı veya şifre yanlış !',
+              type: 'warning',
+            });
+            setIsLoading(false);
           });
-          actions.resetForm();
+        actions.resetForm();
       }}>
       {({handleChange, handleBlur, handleSubmit, values, touched, errors}) => (
         <Root>
-        <ScrollView style={styles.container}>
-          <View style={styles.textinputcontainer}>
-            <TextInput
-              placeholder="E-Posta"
-              style={styles.textinput}
-              onChangeText={handleChange('email')}
-              onBlur={handleBlur('email')}
-              value={values.email}></TextInput>
-            <Text style={styles.errorTitle}>
-              {touched.email && errors.email}
-            </Text>
-            <TextInput
-              placeholder="Şifre"
-              style={styles.textinput}
-              onChangeText={handleChange('password')}
-              onBlur={handleBlur('password')}
-              value={values.password}
-              secureTextEntry={true}></TextInput>
-            <Text style={styles.errorTitle}>
-              {touched.password && errors.password}
-            </Text>
-          </View>
-          <View style={styles.buttoncontainer}>
-            <Button
-              title="Submit"
-              block
-              rounded
-              style={styles.button}
-              onPress={handleSubmit}>
-              <Text style={styles.text}>Giriş Yap</Text>
-            </Button>
-          </View>
-        </ScrollView>
+          <ScrollView style={styles.container}>
+            <View style={styles.textinputcontainer}>
+              <TextInput
+                placeholder="E-Posta"
+                style={styles.textinput}
+                onChangeText={handleChange('email')}
+                onBlur={handleBlur('email')}
+                value={values.email}></TextInput>
+              <Text style={styles.errorTitle}>
+                {touched.email && errors.email}
+              </Text>
+              <TextInput
+                placeholder="Şifre"
+                style={styles.textinput}
+                onChangeText={handleChange('password')}
+                onBlur={handleBlur('password')}
+                value={values.password}
+                secureTextEntry={true}></TextInput>
+              <Text style={styles.errorTitle}>
+                {touched.password && errors.password}
+              </Text>
+            </View>
+            <View style={styles.buttoncontainer}>
+              <Button
+                title="Submit"
+                block
+                rounded
+                style={styles.button}
+                onPress={handleSubmit}>
+                {isLoading ? (
+                  <ActivityIndicator size={25} color="#d3d3d3" />
+                ) : (
+                  <Text style={styles.text}>Giriş Yap</Text>
+                )}
+              </Button>
+            </View>
+          </ScrollView>
         </Root>
       )}
     </Formik>

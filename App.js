@@ -9,8 +9,10 @@ import SignUpScreen from './screens/SignUp';
 import WardrobeScreen from './screens/Wardrobe';
 import CombineScreen from './screens/Combine';
 import FashionScreen from './screens/Fashion';
+import DiscoverScreen from './screens/Discover';
 import ProfileScreen from './screens/Profile';
 import NewClotheScreen from './screens/NewClothe';
+import SearchProfileScreen from './screens/SearchProfile';
 import ClotheDetailScreen from './screens/ClotheDetail';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import auth from '@react-native-firebase/auth';
@@ -21,7 +23,6 @@ import {Provider as PaperProvider} from 'react-native-paper';
 import {UserContext} from './elements/UserContext';
 import firestore from '@react-native-firebase/firestore';
 import {DrawerContent} from './elements/DrawerContent';
-import {set} from 'react-native-reanimated';
 
 const AuthStack = createStackNavigator();
 const AuthStackScreens = () => (
@@ -79,6 +80,28 @@ const WardrobeStackScreens = () => (
     />
   </WardrobeStack.Navigator>
 );
+const FashionStack = createStackNavigator();
+const FashionStackScreens = () => (
+  <FashionStack.Navigator screenOptions={{headerShown: false}}>
+    <FashionStack.Screen name="Fashion" component={FashionScreen} />
+    <FashionStack.Screen
+      name="SearchProfile"
+      component={SearchProfileScreen}
+      tabBarOptions={{tabBarVisible: false}}
+    />
+  </FashionStack.Navigator>
+);
+const DiscoverStack = createStackNavigator();
+const DiscoverStackScreens = () => (
+  <DiscoverStack.Navigator screenOptions={{headerShown: false}}>
+    <DiscoverStack.Screen name="Discover" component={DiscoverScreen} />
+    <DiscoverStack.Screen
+      name="SearchProfile"
+      component={SearchProfileScreen}
+      tabBarOptions={{tabBarVisible: false}}
+    />
+  </DiscoverStack.Navigator>
+);
 const AppTab = createMaterialTopTabNavigator();
 const AppTabScreens = () => (
   <AppTab.Navigator
@@ -112,7 +135,7 @@ const AppTabScreens = () => (
     />
     <AppTab.Screen
       name="Combine"
-      customtitle="Moda"
+      customtitle="Kombin"
       component={CombineScreen}
       options={{
         tabBarLabel: () => <Text style={{fontSize: 10}}> Kombin </Text>,
@@ -125,11 +148,23 @@ const AppTabScreens = () => (
     <AppTab.Screen
       name="Fashion"
       customtitle="Moda"
-      component={FashionScreen}
+      component={FashionStackScreens}
       options={{
         tabBarLabel: () => <Text style={{fontSize: 10}}> Moda </Text>,
         tabBarIcon: ({color}) => (
           <MaterialCommunityIcons name="briefcase" color={color} size={22} />
+        ),
+        tabBarColor: 'gold',
+      }}
+    />
+    <AppTab.Screen
+      name="Discover"
+      customtitle="Keşfet"
+      component={DiscoverStackScreens}
+      options={{
+        tabBarLabel: () => <Text style={{fontSize: 10}}> Keşfet </Text>,
+        tabBarIcon: ({color}) => (
+          <MaterialCommunityIcons name="magnify" color={color} size={22} />
         ),
         tabBarColor: 'gold',
       }}
@@ -181,7 +216,7 @@ export default function App() {
   const [userid, setUserId] = useState(null);
   const [user, setUser] = useState(null);
   const userValue = useMemo(() => ({user, setUser}), [user, setUser]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoaded, setIsLoaded] = useState(true);
 
   function onAuthStateChanged(user) {
     setUserId(user);
@@ -207,7 +242,7 @@ export default function App() {
       const userData = userDoc.data();
       console.log('Userdoc: ', userData);
       setUser(userData);
-      setIsLoading(true);
+      setIsLoaded(true);
     }
     console.log('GEtuser');
   };
@@ -218,7 +253,7 @@ export default function App() {
         console.log('User:', user);
     } else {
       console.log('USerid yok');
-      setIsLoading(false);
+      setIsLoaded(false);
     }
     return user;
   }, [userid]);
@@ -228,7 +263,7 @@ export default function App() {
     <SafeAreaProvider>
       <PaperProvider>
         <NavigationContainer>
-          {isLoading ? (
+          {isLoaded ? (
             <UserContext.Provider value={userValue}>
               <AppDrawerScreens />
             </UserContext.Provider>

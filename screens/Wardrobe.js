@@ -1,28 +1,27 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {View, StyleSheet, FlatList, TouchableOpacity} from 'react-native';
-import {Button, Text} from 'native-base';
+import {View, StyleSheet, FlatList, TouchableOpacity, Text} from 'react-native';
+import {Button} from 'native-base';
 import ClothesCard from '../elements/ClothesCard';
 import {UserContext} from '../elements/UserContext';
 import firestore from '@react-native-firebase/firestore';
 
-
 export default function Wardrobe({navigation}) {
   const {user} = useContext(UserContext);
   const [wardrobe, setWardrobe] = useState([]);
-  
+
   function groupBy(list, keyGetter) {
     const map = new Map();
-    list.forEach((item) => {
-         const key = keyGetter(item);
-         const collection = map.get(key);
-         if (!collection) {
-             map.set(key, [item]);
-         } else {
-             collection.push(item);
-         }
+    list.forEach(item => {
+      const key = keyGetter(item);
+      const collection = map.get(key);
+      if (!collection) {
+        map.set(key, [item]);
+      } else {
+        collection.push(item);
+      }
     });
     return map;
-}
+  }
   const getWardrobe = () => {
     firestore()
       .collection('users')
@@ -37,9 +36,15 @@ export default function Wardrobe({navigation}) {
             ...clotheDocument.data(),
           });
         });
-        const clothesMap = groupBy(tempClothes, clothe => clothe.clotheCategory);
-        const clothesArray = Array.from(clothesMap, ([category, clothes]) => ({ category, clothes }));
-        clothesArray.sort((a,b) => (a.category > b.category) ? 1 : -1);
+        const clothesMap = groupBy(
+          tempClothes,
+          clothe => clothe.clotheCategory,
+        );
+        const clothesArray = Array.from(clothesMap, ([category, clothes]) => ({
+          category,
+          clothes,
+        }));
+        clothesArray.sort((a, b) => (a.category > b.category ? 1 : -1));
         setWardrobe(clothesArray);
         console.log('Wardrobe: ', clothesArray);
       });
@@ -73,7 +78,14 @@ export default function Wardrobe({navigation}) {
               data={item.clothes}
               horizontal={true}
               keyExtractor={(item, index) => item + index}
-              renderItem={({item}) => <TouchableOpacity onPress={() => navigation.navigate('ClotheDetail', {clothe: item})}><ClothesCard clothe={item.clothePicture} /></TouchableOpacity> }
+              renderItem={({item}) => (
+                <TouchableOpacity
+                  onPress={() =>
+                    navigation.navigate('ClotheDetail', {clothe: item})
+                  }>
+                  <ClothesCard clothe={item.clothePicture} />
+                </TouchableOpacity>
+              )}
             />
           </View>
         )}
@@ -83,11 +95,13 @@ export default function Wardrobe({navigation}) {
         style={{
           position: 'absolute',
           alignSelf: 'center',
+          justifyContent: 'center',
+          width: 50,
           bottom: 0,
           borderRadius: 80,
           margin: 10,
         }}>
-        <Text>Ekle</Text>
+        <Text style={styles.buttonText}>+</Text>
       </Button>
     </View>
   );
@@ -109,5 +123,9 @@ const styles = StyleSheet.create({
   contentcontainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
+  },
+  buttonText: {
+    color: '#eeeeee',
+    fontSize: 25,
   },
 });

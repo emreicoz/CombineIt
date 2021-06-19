@@ -1,5 +1,5 @@
 import React, {useContext} from 'react';
-import {View, StyleSheet} from 'react-native';
+import {View, StyleSheet, Text} from 'react-native';
 import {
   useTheme,
   Avatar,
@@ -7,7 +7,6 @@ import {
   Caption,
   Paragraph,
   Drawer,
-  Text,
   TouchableRipple,
   Switch,
 } from 'react-native-paper';

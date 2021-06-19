@@ -1,6 +1,5 @@
 import React, {useContext, useState, useEffect} from 'react';
-import {View, Image, TextInput} from 'react-native';
-import {Text} from 'native-base';
+import {View, Image, TextInput, Text} from 'react-native';
 import {UserContext} from '../elements/UserContext';
 
 export default function Combine({navigation}) {

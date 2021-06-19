@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
-import {StyleSheet, View, TextInput, ScrollView, Image} from 'react-native';
-import {Button, Toast, Text, Root} from 'native-base';
+import {StyleSheet, View, TextInput, ScrollView, Image, Modal, ActivityIndicator, Text} from 'react-native';
+import {Button, Toast, Root} from 'native-base';
 import {Formik} from 'formik';
 import * as yup from 'yup';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
@@ -82,6 +82,7 @@ export default function SignUp() {
       }
     });
   };
+  const [isLoading, setIsLoading] = useState(false);
   return (
     <Formik
       initialValues={{
@@ -93,7 +94,7 @@ export default function SignUp() {
       }}
       validationSchema={SignUpSchema}
       onSubmit={async (values, actions) => {
-        actions.resetForm();
+        setIsLoading(true);
         await auth()
           .createUserWithEmailAndPassword(values.email, values.password)
           .then(cred => {
@@ -106,27 +107,32 @@ export default function SignUp() {
                 type: 'warning',
               });
             }
+            setIsLoading(false);
           });
         const currentuser = auth().currentUser;
-        const imageRef = storage().ref('users/' + currentuser.uid + '/profilePicture.png');
-        const uploadImage = async () => {
-          await imageRef.putFile(profilePict.uri);
-          const url = await imageRef.getDownloadURL();
-          return url;
-        };
-        const tempurl = await uploadImage();
-        firestore()
-          .collection('users')
-          .doc(currentuser.uid)
-          .set({
-            userId: currentuser.uid,
-            nameSurname: values.nameSurname,
-            userName: values.userName,
-            email: values.email,
-            profilePicture: tempurl
-              ? tempurl
-              : 'https://www.google.com/url?sa=i&url=https%3A%2F%2Fpixabay.com%2Fvectors%2Fblank-profile-picture-mystery-man-973460%2F&psig=AOvVaw3nYiOoheQylXsev372LxOs&ust=1620296583645000&source=images&cd=vfe&ved=0CAIQjRxqFwoTCJCOsqWpsvACFQAAAAAdAAAAABAI',
-          });
+        if(currentuser != null){
+          const imageRef = storage().ref(
+            'users/' + currentuser.uid + '/profilePicture.png',
+          );
+          const uploadImage = async () => {
+            await imageRef.putFile(profilePict.uri);
+            const url = await imageRef.getDownloadURL();
+            return url;
+          };
+          const tempurl = await uploadImage();
+          firestore()
+            .collection('users')
+            .doc(currentuser.uid)
+            .set({
+              userId: currentuser.uid,
+              nameSurname: values.nameSurname,
+              userName: values.userName,
+              email: values.email,
+              profilePicture: tempurl
+                ? tempurl
+                : 'https://www.google.com/url?sa=i&url=https%3A%2F%2Fpixabay.com%2Fvectors%2Fblank-profile-picture-mystery-man-973460%2F&psig=AOvVaw3nYiOoheQylXsev372LxOs&ust=1620296583645000&source=images&cd=vfe&ved=0CAIQjRxqFwoTCJCOsqWpsvACFQAAAAAdAAAAABAI',
+            });
+        }
       }}>
       {({handleChange, handleBlur, handleSubmit, values, touched, errors}) => (
         <Root>
@@ -207,7 +213,11 @@ export default function SignUp() {
                 rounded
                 style={styles.button}
                 onPress={handleSubmit}>
-                <Text style={styles.text}>Kayıt Ol</Text>
+                {isLoading ? (
+                  <ActivityIndicator size={25} color="#d3d3d3" />
+                ) : (
+                  <Text style={styles.text}>Kayıt Ol</Text>
+                )}
               </Button>
             </View>
           </ScrollView>
