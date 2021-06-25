@@ -1,13 +1,9 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {View, StyleSheet, FlatList, TouchableOpacity, Text} from 'react-native';
-import {Button} from 'native-base';
 import ClothesCard from '../elements/ClothesCard';
-import {UserContext} from '../elements/UserContext';
-
 import firestore from '@react-native-firebase/firestore';
 
-export default function Wardrobe({navigation}) {
-  const {user} = useContext(UserContext);
+export default function Wardrobe(props) {
   const [wardrobe, setWardrobe] = useState([]);
 
   function groupBy(list, keyGetter) {
@@ -26,7 +22,7 @@ export default function Wardrobe({navigation}) {
   const getWardrobe = () => {
     firestore()
       .collection('users')
-      .doc(user.userId)
+      .doc(props.searchedUser.userId)
       .collection('clothes')
       .onSnapshot(clothesCollection => {
         const tempClothes = [];
@@ -66,7 +62,7 @@ export default function Wardrobe({navigation}) {
     getWardrobe();
   }, []);
 
-  console.log("Wardrobe user:",user);
+  console.log('Wardrobe searched user:', props.searchedUser);
   return (
     <View style={{flex: 1, paddingHorizontal: 5}}>
       <FlatList
@@ -80,10 +76,7 @@ export default function Wardrobe({navigation}) {
               horizontal={true}
               keyExtractor={(item, index) => item + index}
               renderItem={({item}) => (
-                <TouchableOpacity
-                  onPress={() =>
-                    navigation.navigate('ClotheDetail', {clothe: item})
-                  }>
+                <TouchableOpacity>
                   <ClothesCard clothe={item.clothePicture} />
                 </TouchableOpacity>
               )}
@@ -91,42 +84,6 @@ export default function Wardrobe({navigation}) {
           </View>
         )}
       />
-      <Button
-        onPress={() => navigation.navigate('NewClothe')}
-        style={{
-          position: 'absolute',
-          alignSelf: 'center',
-          justifyContent: 'center',
-          width: 50,
-          bottom: 0,
-          borderRadius: 80,
-          margin: 10,
-        }}>
-        <Text style={styles.buttonText}>+</Text>
-      </Button>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    margin: '1%',
-    padding: 5,
-    borderRadius: 5,
-    backgroundColor: '#39426250',
-  },
-  categorycontainer: {},
-  categoryheader: {
-    fontWeight: 'bold',
-    backgroundColor: 'yellow',
-  },
-  contentcontainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-  },
-  buttonText: {
-    color: '#eeeeee',
-    fontSize: 25,
-  },
-});

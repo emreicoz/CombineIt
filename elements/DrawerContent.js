@@ -1,5 +1,5 @@
 import React, {useContext} from 'react';
-import {View, StyleSheet} from 'react-native';
+import {View, StyleSheet, Text} from 'react-native';
 import {
   useTheme,
   Avatar,
@@ -7,7 +7,6 @@ import {
   Caption,
   Paragraph,
   Drawer,
-  Text,
   TouchableRipple,
   Switch,
 } from 'react-native-paper';
@@ -46,7 +45,7 @@ export function DrawerContent(props) {
             <View style={styles.row}>
               <View style={styles.section}>
                 <Paragraph style={[styles.paragraph, styles.caption]}>
-                  8
+                  4
                 </Paragraph>
                 <Caption style={styles.caption}>Kıyafet</Caption>
               </View>

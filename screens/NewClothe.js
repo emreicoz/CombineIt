@@ -8,6 +8,7 @@ import {
   Image,
   FlatList,
   Modal,
+  ScrollView,
 } from 'react-native';
 import ImagePickerModal from '../elements/ImagePickerModal';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
@@ -66,50 +67,804 @@ export default function NewClothe({navigation}) {
   };
   const colors = [
     {
-      color: '#154',
+      colorName: 'Antracite',
+      colorNameTR: 'Antrasit',
+      colorPath: require('../Colors/antrasit.png'),
+      colorCode: '#383E42',
+      colorPathh: 'antrasit.png',
     },
     {
-      color: '#547',
+      colorName: 'Yellow',
+      colorNameTR: 'Sarı',
+      colorPath: require('../Colors/sari.png'),
+      colorCode: '#FFFF00',
+      colorPathh: 'sari.png',
     },
     {
-      color: '#215',
+      colorName: 'White',
+      colorNameTR: 'Beyaz',
+      colorPath: require('../Colors/beyaz.png'),
+      colorCode: '#FFFFFF',
+      colorPathh: 'beyaz.png',
     },
     {
-      color: '#985',
+      colorName: 'Black',
+      colorNameTR: 'Siyah',
+      colorPath: require('../Colors/siyah.png'),
+      colorCode: '#000000',
+      colorPathh: 'siyah.png',
     },
     {
-      color: '#abf',
+      colorName: 'Beige',
+      colorNameTR: 'Bej',
+      colorPath: require('../Colors/bej.png'),
+      colorCode: '#F5F5DC',
+      colorPathh: 'bej.png',
     },
     {
-      color: '#acd',
+      colorName: 'Burgundy',
+      colorNameTR: 'Bordo',
+      colorPath: require('../Colors/bordo.png'),
+      colorCode: '#800020',
+      colorPathh: 'bordo.png',
     },
     {
-      color: '#154',
+      colorName: 'Ecru',
+      colorNameTR: 'Ekru',
+      colorPath: require('../Colors/ekru.png'),
+      colorCode: '#C2B280',
+      colorPathh: 'ekru.png',
     },
     {
-      color: '#547',
+      colorName: 'Fuchsia',
+      colorNameTR: 'Fuşya',
+      colorPath: require('../Colors/fusya.png'),
+      colorCode: 'FF00FF',
+      colorPathh: 'fusya.png',
     },
     {
-      color: '#215',
+      colorName: 'Gray',
+      colorNameTR: 'Gri',
+      colorPath: require('../Colors/gri.png'),
+      colorCode: '#808080',
+      colorPathh: 'gri.png',
     },
     {
-      color: '#985',
+      colorName: 'Khaki',
+      colorNameTR: 'Haki',
+      colorPath: require('../Colors/haki.png'),
+      colorCode: '#F0E68C',
+      colorPathh: 'haki.png',
     },
     {
-      color: '#abf',
+      colorName: 'Indigo',
+      colorNameTR: 'İndigo',
+      colorPath: require('../Colors/indigo.png'),
+      colorCode: '#4B0082',
+      colorPathh: 'indigo.png',
     },
     {
-      color: '#acd',
+      colorName: 'Coffee',
+      colorNameTR: 'Kahve',
+      colorPath: require('../Colors/kahve.png'),
+      colorCode: '#6f4e37',
+      colorPathh: 'kahve.png',
+    },
+    {
+      colorName: 'Red',
+      colorNameTR: 'Kırmızı',
+      colorPath: require('../Colors/kirmizi.png'),
+      colorCode: '#FF0000',
+      colorPathh: 'kirmizi.png',
+    },
+    {
+      colorName: 'NavyBlue',
+      colorNameTR: 'Lacivert',
+      colorPath: require('../Colors/lacivert.png'),
+      colorCode: '#000080',
+      colorPathh: 'lacivert.png',
+    },
+    {
+      colorName: 'Blue',
+      colorNameTR: 'Mavi',
+      colorPath: require('../Colors/mavi.png'),
+      colorCode: '#0000FF',
+      colorPathh: 'mavi.png',
+    },
+    {
+      colorName: 'Coral',
+      colorNameTR: 'Mercan',
+      colorPath: require('../Colors/mercan.png'),
+      colorCode: '#ff7f50',
+      colorPathh: 'mercan.png',
+    },
+    {
+      colorName: 'Purple',
+      colorNameTR: 'Mor',
+      colorPath: require('../Colors/mor.png'),
+      colorCode: '#6a0dad',
+      colorPathh: 'mor.png',
+    },
+    {
+      colorName: 'Damson',
+      colorNameTR: 'Mürdüm',
+      colorPath: require('../Colors/murdum.png'),
+      colorCode: '#854c65',
+      colorPathh: 'murdum.png',
+    },
+    {
+      colorName: 'Pink',
+      colorNameTR: 'Pembe',
+      colorPath: require('../Colors/pembe.png'),
+      colorCode: '#FFC0CB',
+      colorPathh: 'pembe.png',
+    },
+    {
+      colorName: 'Petrol',
+      colorNameTR: 'Petrol',
+      colorPath: require('../Colors/petrol.png'),
+      colorCode: '#005f69',
+      colorPathh: 'petrol.png',
+    },
+    {
+      colorName: 'Turquoise',
+      colorNameTR: 'Turkuaz',
+      colorPath: require('../Colors/turkuaz.png'),
+      colorCode: '#40E0D0',
+      colorPathh: 'turkuaz.png',
+    },
+    {
+      colorName: 'Orange',
+      colorNameTR: 'Turuncu',
+      colorPath: require('../Colors/turuncu.png'),
+      colorCode: '#FFA500',
+      colorPathh: 'turuncu.png',
+    },
+    {
+      colorName: 'Green',
+      colorNameTR: 'Yeşil',
+      colorPath: require('../Colors/yesil.png'),
+      colorCode: '#00FF00',
+      colorPathh: 'yesil.png',
+    },
+    {
+      colorName: 'MultipleColor',
+      colorNameTR: 'Çok-Renkli',
+      colorPath: require('../Colors/cokrenkli.png'),
+      colorCode: '#',
+      colorPathh: 'cokrenkli.png',
     },
   ];
   const [colorModalVisible, setColorModalVisible] = useState(false);
   const [clothe, setClothe] = useState({
     id: '0',
-    color: '#fff',
-    category: 'Ceket',
-    season: 'İlkbahar',
+    colorName: 'Black',
+    colorNameTR: 'Siyah',
+    colorPath: require('../Colors/siyah.png'),
+    colorPathh: 'siyah.png',
     topCategory: '',
+    category: '',
+    mold: '',
+    fabric: '',
+    length: '',
+    season: '',
+    style: '',
   });
+  const categoryData = [
+    {
+      title: 'Üst Giyim',
+      data: [
+        {
+          value: 'Atlet',
+          label: 'Atlet',
+          avatarSource: {
+            uri: 'https://img.icons8.com/cute-clipart/2x/iphone-x.png',
+          },
+        },
+        {
+          value: 'Bluz',
+          label: 'Bluz',
+          avatarSource: {
+            uri: 'https://img.icons8.com/cute-clipart/2x/iphone-x.png',
+          },
+        },
+        {
+          value: 'Ceket',
+          label: 'Ceket',
+          avatarSource: {
+            uri: 'https://img.icons8.com/cute-clipart/2x/iphone-x.png',
+          },
+        },
+        {
+          value: 'Büstiyer',
+          label: 'Büstiyer',
+          avatarSource: {
+            uri: 'https://img.icons8.com/cute-clipart/2x/iphone-x.png',
+          },
+        },
+        {
+          value: 'Gömlek',
+          label: 'Gömlek',
+          avatarSource: {
+            uri: 'https://img.icons8.com/cute-clipart/2x/iphone-x.png',
+          },
+        },
+        {
+          value: 'Kazak',
+          label: 'Kazak',
+          avatarSource: {
+            uri: 'https://img.icons8.com/cute-clipart/2x/iphone-x.png',
+          },
+        },
+        {
+          value: 'Sweatshirt',
+          label: 'Sweatshirt',
+          avatarSource: {
+            uri: 'https://img.icons8.com/cute-clipart/2x/iphone-x.png',
+          },
+        },
+        {
+          value: 'Tişört',
+          label: 'Tişört',
+          avatarSource: {
+            uri: 'https://img.icons8.com/cute-clipart/2x/iphone-x.png',
+          },
+        },
+      ],
+    },
+    {
+      title: 'Alt Giyim',
+      data: [
+        {
+          value: 'Etek',
+          label: 'Etek',
+          avatarSource: {
+            uri: 'https://img.icons8.com/cute-clipart/344/android.png',
+          },
+        },
+        {
+          value: 'Kapri',
+          label: 'Kapri',
+          avatarSource: {
+            uri: 'https://img.icons8.com/cute-clipart/344/android.png',
+          },
+        },
+        {
+          value: 'Pantolon',
+          label: 'Pantolon',
+          avatarSource: {
+            uri: 'https://img.icons8.com/cute-clipart/344/android.png',
+          },
+        },
+        {
+          value: 'Şort',
+          label: 'Şort',
+          avatarSource: {
+            uri: 'https://img.icons8.com/cute-clipart/344/android.png',
+          },
+        },
+        {
+          value: 'Tayt',
+          label: 'Tayt',
+          avatarSource: {
+            uri: 'https://img.icons8.com/cute-clipart/344/android.png',
+          },
+        },
+      ],
+    },
+    {
+      title: 'Tek Parça',
+      data: [
+        {
+          value: 'Elbise',
+          label: 'Elbise',
+          avatarSource: {
+            uri: 'https://img.icons8.com/cute-clipart/344/android.png',
+          },
+        },
+        {
+          value: 'Tulum',
+          label: 'Tulum',
+          avatarSource: {
+            uri: 'https://img.icons8.com/cute-clipart/344/android.png',
+          },
+        },
+      ],
+    },
+    {
+      title: 'Ayakkabı',
+      data: [
+        {
+          value: 'Babet',
+          label: 'Babet',
+          avatarSource: {
+            uri: 'https://img.icons8.com/cute-clipart/344/android.png',
+          },
+        },
+        {
+          value: 'Bot',
+          label: 'Bot',
+          avatarSource: {
+            uri: 'https://img.icons8.com/cute-clipart/344/android.png',
+          },
+        },
+        {
+          value: 'Çizme',
+          label: 'Çizme',
+          avatarSource: {
+            uri: 'https://img.icons8.com/cute-clipart/344/android.png',
+          },
+        },
+        {
+          value: 'Mokasen',
+          label: 'Mokasen',
+          avatarSource: {
+            uri: 'https://img.icons8.com/cute-clipart/344/android.png',
+          },
+        },
+        {
+          value: 'Sandalet',
+          label: 'Sandalet',
+          avatarSource: {
+            uri: 'https://img.icons8.com/cute-clipart/344/android.png',
+          },
+        },
+        {
+          value: 'Spor Ayakkabı',
+          label: 'Spor Ayakkabı',
+          avatarSource: {
+            uri: 'https://img.icons8.com/cute-clipart/344/android.png',
+          },
+        },
+        {
+          value: 'Topuklu Ayakkabı',
+          label: 'Topuklu Ayakkabı',
+          avatarSource: {
+            uri: 'https://img.icons8.com/cute-clipart/344/android.png',
+          },
+        },
+      ],
+    },
+  ];
+  const subCategoryData = {
+    top: [
+      {
+        value: 'Atlet',
+        label: 'Atlet',
+        avatarSource: {
+          uri: 'https://img.icons8.com/cute-clipart/2x/iphone-x.png',
+        },
+      },
+      {
+        value: 'Bluz',
+        label: 'Bluz',
+        avatarSource: {
+          uri: 'https://img.icons8.com/cute-clipart/2x/iphone-x.png',
+        },
+      },
+      {
+        value: 'Ceket',
+        label: 'Ceket',
+        avatarSource: {
+          uri: 'https://img.icons8.com/cute-clipart/2x/iphone-x.png',
+        },
+      },
+      {
+        value: 'Büstiyer',
+        label: 'Büstiyer',
+        avatarSource: {
+          uri: 'https://img.icons8.com/cute-clipart/2x/iphone-x.png',
+        },
+      },
+      {
+        value: 'Gömlek',
+        label: 'Gömlek',
+        avatarSource: {
+          uri: 'https://img.icons8.com/cute-clipart/2x/iphone-x.png',
+        },
+      },
+      {
+        value: 'Kazak',
+        label: 'Kazak',
+        avatarSource: {
+          uri: 'https://img.icons8.com/cute-clipart/2x/iphone-x.png',
+        },
+      },
+      {
+        value: 'Sweatshirt',
+        label: 'Sweatshirt',
+        avatarSource: {
+          uri: 'https://img.icons8.com/cute-clipart/2x/iphone-x.png',
+        },
+      },
+      {
+        value: 'Tişört',
+        label: 'Tişört',
+        avatarSource: {
+          uri: 'https://img.icons8.com/cute-clipart/2x/iphone-x.png',
+        },
+      },
+    ],
+    bottom: [
+      {
+        value: 'Etek',
+        label: 'Etek',
+        avatarSource: {
+          uri: 'https://img.icons8.com/cute-clipart/344/android.png',
+        },
+      },
+      {
+        value: 'Kapri',
+        label: 'Kapri',
+        avatarSource: {
+          uri: 'https://img.icons8.com/cute-clipart/344/android.png',
+        },
+      },
+      {
+        value: 'Pantolon',
+        label: 'Pantolon',
+        avatarSource: {
+          uri: 'https://img.icons8.com/cute-clipart/344/android.png',
+        },
+      },
+      {
+        value: 'Şort',
+        label: 'Şort',
+        avatarSource: {
+          uri: 'https://img.icons8.com/cute-clipart/344/android.png',
+        },
+      },
+      {
+        value: 'Tayt',
+        label: 'Tayt',
+        avatarSource: {
+          uri: 'https://img.icons8.com/cute-clipart/344/android.png',
+        },
+      },
+    ],
+    onePart: [
+      {
+        value: 'Elbise',
+        label: 'Elbise',
+        avatarSource: {
+          uri: 'https://img.icons8.com/cute-clipart/344/android.png',
+        },
+      },
+      {
+        value: 'Tulum',
+        label: 'Tulum',
+        avatarSource: {
+          uri: 'https://img.icons8.com/cute-clipart/344/android.png',
+        },
+      },
+    ],
+    shoe: [
+      {
+        value: 'Babet',
+        label: 'Babet',
+        avatarSource: {
+          uri: 'https://img.icons8.com/cute-clipart/344/android.png',
+        },
+      },
+      {
+        value: 'Bot',
+        label: 'Bot',
+        avatarSource: {
+          uri: 'https://img.icons8.com/cute-clipart/344/android.png',
+        },
+      },
+      {
+        value: 'Çizme',
+        label: 'Çizme',
+        avatarSource: {
+          uri: 'https://img.icons8.com/cute-clipart/344/android.png',
+        },
+      },
+      {
+        value: 'Mokasen',
+        label: 'Mokasen',
+        avatarSource: {
+          uri: 'https://img.icons8.com/cute-clipart/344/android.png',
+        },
+      },
+      {
+        value: 'Sandalet',
+        label: 'Sandalet',
+        avatarSource: {
+          uri: 'https://img.icons8.com/cute-clipart/344/android.png',
+        },
+      },
+      {
+        value: 'Spor Ayakkabı',
+        label: 'Spor Ayakkabı',
+        avatarSource: {
+          uri: 'https://img.icons8.com/cute-clipart/344/android.png',
+        },
+      },
+      {
+        value: 'Topuklu Ayakkabı',
+        label: 'Topuklu Ayakkabı',
+        avatarSource: {
+          uri: 'https://img.icons8.com/cute-clipart/344/android.png',
+        },
+      },
+    ],
+  };
+  const moldData = {
+    top: [
+      {
+        value: 'Bol',
+        label: 'Bol',
+      },
+      {
+        value: 'Dar',
+        label: 'Dar',
+      },
+      {
+        value: 'Oversize',
+        label: 'Oversize',
+      },
+      {
+        value: 'Standart',
+        label: 'Standart',
+      },
+    ],
+    bottom: [
+      {
+        value: 'Bol',
+        label: 'Bol',
+      },
+      {
+        value: 'Dar',
+        label: 'Dar',
+      },
+      {
+        value: 'Havuç Kesim',
+        label: 'Havuç Kesim',
+      },
+      {
+        value: 'Mom Fit',
+        label: 'Mom Fit',
+      },
+      {
+        value: 'Kargo',
+        label: 'Kargo',
+      },
+      {
+        value: 'Standart',
+        label: 'Standart',
+      },
+      {
+        value: 'Skinny',
+        label: 'Skinny',
+      },
+    ],
+    onePart: [
+      {
+        value: 'Bol',
+        label: 'Bol',
+      },
+      {
+        value: 'Dar',
+        label: 'Dar',
+      },
+      {
+        value: 'Oversize',
+        label: 'Oversize',
+      },
+      {
+        value: 'Standart',
+        label: 'Standart',
+      },
+    ],
+    shoe: [
+      {
+        value: '',
+        label: 'Ayakkabı için kalıp seçmenize gerek yoktur.',
+      },
+    ],
+  };
+  const fabricData = {
+    top: [
+      {
+        value: 'Penye',
+        label: 'Penye',
+      },
+      {
+        value: 'Dantel',
+        label: 'Dantel',
+      },
+      {
+        value: 'Pike',
+        label: 'Pike',
+      },
+      {
+        value: 'Pamuk',
+        label: 'Pamuk',
+      },
+      {
+        value: 'Keten',
+        label: 'Keten',
+      },
+    ],
+    bottom: [
+      {
+        value: 'Kot',
+        label: 'Kot',
+      },
+      {
+        value: 'Kadife',
+        label: 'Kadife',
+      },
+      {
+        value: 'Deri',
+        label: 'Deri',
+      },
+      {
+        value: 'Saten',
+        label: 'Saten',
+      },
+      {
+        value: 'Keten',
+        label: 'Keten',
+      },
+      {
+        value: 'Pamuk',
+        label: 'Pamuk',
+      },
+    ],
+    onePart: [
+      {
+        value: 'Kot',
+        label: 'Kot',
+      },
+      {
+        value: 'Kadife',
+        label: 'Kadife',
+      },
+      {
+        value: 'Deri',
+        label: 'Deri',
+      },
+      {
+        value: 'Saten',
+        label: 'Saten',
+      },
+      {
+        value: 'Keten',
+        label: 'Keten',
+      },
+      {
+        value: 'Pamuk',
+        label: 'Pamuk',
+      },
+      {
+        value: 'Dantel',
+        label: 'Dantel',
+      },
+      {
+        value: 'Penye',
+        label: 'Penye',
+      },
+    ],
+    shoe: [
+      {
+        value: 'Deri',
+        label: 'Deri',
+      },
+      {
+        value: 'Süet',
+        label: 'Süet',
+      },
+      {
+        value: 'Bez',
+        label: 'Bez',
+      },
+      {
+        value: 'Suni-deri',
+        label: 'Suni-deri',
+      },
+    ],
+  };
+  const lenghtData = {
+    top: [
+      {
+        value: 'Uzun',
+        label: 'Uzun',
+      },
+      {
+        value: 'Kısa',
+        label: 'Kısa',
+      },
+      {
+        value: 'Askılı',
+        label: 'Askılı',
+      },
+      {
+        value: '3/4-Boy',
+        label: '3/4-Boy',
+      },
+      {
+        value: 'Kolsuz',
+        label: 'Kolsuz',
+      },
+    ],
+    bottom: [
+      {
+        value: 'Uzun',
+        label: 'Uzun',
+      },
+      {
+        value: 'Standart',
+        label: 'Standart',
+      },
+      {
+        value: 'Mini',
+        label: 'Mini',
+      },
+      {
+        value: 'Midi',
+        label: 'Midi',
+      },
+    ],
+    onePart: [
+      {
+        value: 'Uzun',
+        label: 'Uzun',
+      },
+      {
+        value: 'Standart',
+        label: 'Standart',
+      },
+      {
+        value: 'Mini',
+        label: 'Mini',
+      },
+      {
+        value: 'Midi',
+        label: 'Midi',
+      },
+    ],
+    shoe: [
+      {
+        value: '',
+        label: 'Ayakkabı için uzunluk seçmenize gerek yoktur.',
+      },
+    ],
+  };
+  const styleData = [
+    {
+      value: 'Günlük',
+      label: 'Günlük',
+    },
+    {
+      value: 'Resmi',
+      label: 'Resmi',
+    },
+    {
+      value: 'Spor',
+      label: 'Spor',
+    },
+  ];
+  const seasonData = [
+    {
+      value: 'İlkbahar',
+      label: 'İlkbahar',
+    },
+    {
+      value: 'Yaz',
+      label: 'Yaz',
+    },
+    {
+      value: 'Sonbahar',
+      label: 'Sonbahar',
+    },
+    {
+      value: 'Kış',
+      label: 'Kış',
+    },
+  ];
+
   useEffect(() => {
     var date = new Date().getDate(); //Current Date
     var month = new Date().getMonth() + 1; //Current Month
@@ -133,22 +888,6 @@ export default function NewClothe({navigation}) {
       const url = await imageRef.getDownloadURL();
       return url;
     };
-    function getBodyPart() {  
-      if(clothe.category == "Ceket"){
-        clothe.topCategory = "Dış Giyim"
-      }else if(clothe.category == "Gömlek" || clothe.category == "Kazak" || clothe.category == "Tişört"){
-        clothe.topCategory = "Üst Giyim";
-      }else if (clothe.category == "Etek" || clothe.category == "Pantolon" || clothe.category == "Şort"){
-        clothe.topCategory = "Alt Giyim";
-      }else if (clothe.category == "Bot" || clothe.category == "Sandalet" || clothe.category == "Spor Ayakkabı"){
-        clothe.topCategory = "Ayakkabı";
-      }else if (clothe.category == "Çanta"){
-        clothe.topCategory = "Aksesuar";
-      }else if(clothe.category == "Elbise"){
-        clothe.topCategory = "Tüm Giyim"
-      }
-    }
-    getBodyPart();
     const tempurl = await uploadImage();
     await firestore()
       .collection('users')
@@ -157,149 +896,351 @@ export default function NewClothe({navigation}) {
       .doc()
       .set({
         clotheId: clothe.id,
-        clotheColor: clothe.color,
-        clotheSeason: clothe.season,
-        clotheCategory: clothe.category,
+        colorNameTR: clothe.colorNameTR,
         clotheTopCategory: clothe.topCategory,
-        clothePicture: tempurl
-          ? tempurl
-          : 'https://www.google.com/url?sa=i&url=https%3A%2F%2Fpixabay.com%2Fvectors%2Fblank-profile-picture-mystery-man-973460%2F&psig=AOvVaw3nYiOoheQylXsev372LxOs&ust=1620296583645000&source=images&cd=vfe&ved=0CAIQjRxqFwoTCJCOsqWpsvACFQAAAAAdAAAAABAI',
+        clotheCategory: clothe.category,
+        clotheMold: clothe.mold,
+        clotheFabric: clothe.fabric,
+        clotheLength: clothe.length,
+        clotheSeason: clothe.season,
+        clotheStyle: clothe.style,
+        clothePicture: tempurl,
       });
     navigation.popToTop();
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.profileImageContainer}>
-        <TouchableOpacity
-          style={styles.profile}
-          onPress={() => setModalVisible(true)}>
-          <Image
-            source={
-              profilePict
-                ? {
-                    uri: profilePict.uri,
-                  }
-                : require('../images/panth1.png')
-            }
-            style={{width: 150, height: 150, borderRadius: 20}}
-          />
-        </TouchableOpacity>
-      </View>
-      <ImagePickerModal
-        modalVisible={modalVisible}
-        setModalVisible={setModalVisible}
-        launchCam={launchCam}
-        launchImageLib={launchImageLib}
-      />
-      <View style={styles.attributes}>
-        <View style={styles.attribute}>
-          <Text>Renk: </Text>
-          <Modal
-            animationType="fade"
-            transparent={true}
-            visible={colorModalVisible}
-            onRequestClose={() => {
-              setColorModalVisible(false);
-            }}>
-            <View style={{backgroundColor: '#000000aa', flex: 1}}>
-              <TouchableOpacity
-                style={{flex: 1}}
-                onPress={() => setColorModalVisible(false)}>
-                <TouchableWithoutFeedback>
-                  <View style={styles.modal}>
-                    <FlatList
-                      key="#"
-                      data={colors}
-                      numColumns={5}
-                      keyExtractor={(item, index) => item + index}
-                      renderItem={({item}) => (
-                        <View style={{padding: 2}}>
-                          <TouchableOpacity
-                            onPress={() => {
-                              setClothe({...clothe, color: item.color});
-                              setColorModalVisible(false);
-                            }}>
-                            <View
-                              style={{
-                                width: 30,
-                                height: 30,
-                                backgroundColor: item.color,
-                                borderRadius: 50,
-                              }}></View>
-                          </TouchableOpacity>
-                        </View>
-                      )}
-                    />
-                  </View>
-                </TouchableWithoutFeedback>
-              </TouchableOpacity>
-            </View>
-          </Modal>
-          <TouchableOpacity onPress={() => setColorModalVisible(true)}>
-            <View
-              style={{
-                width: 30,
-                height: 30,
-                backgroundColor: clothe.color,
-                borderRadius: 50,
-              }}></View>
+    <ScrollView>
+      <View style={styles.container}>
+        <View style={styles.profileImageContainer}>
+          <TouchableOpacity
+            style={styles.profile}
+            onPress={() => setModalVisible(true)}>
+            <Image
+              source={
+                profilePict
+                  ? {
+                      uri: profilePict.uri,
+                    }
+                  : require('../images/panth1.png')
+              }
+              style={{width: 150, height: 150, borderRadius: 20}}
+            />
           </TouchableOpacity>
         </View>
-        <View style={styles.attribute}>
-          <Text>Kategori: </Text>
-          <Picker
-            style={{maxWidth: 150, height: 40}}
-            mode="dropdown"
-            selectedValue=""
-            onValueChange={(itemValue, itemIndex) =>
-              setClothe({...clothe, category: itemValue})
-            }>
-            <Picker.Item label="Ceket" value="Ceket" key="4" /> 
-            <Picker.Item label="Gömlek" value="Gömlek" key="6" /> 
-            <Picker.Item label="Kazak" value="Kazak" key="2" />
-            <Picker.Item label="Tişört" value="Tişört" key="0" />
-            <Picker.Item label="Elbise" value="Elbise" key="3" /> 
-            <Picker.Item label="Etek" value="Etek" key="10" /> 
-            <Picker.Item label="Pantolon" value="Pantolon" key="1" /> 
-            <Picker.Item label="Şort" value="Şort" key="11" /> 
-            <Picker.Item label="Bot" value="Bot" key="9" /> 
-            <Picker.Item label="Sandalet" value="Sandalet" key="5" /> 
-            <Picker.Item label="Spor Ayakkabı" value="Spor Ayakkabı" key="7" /> 
-            <Picker.Item label="Çanta" value="Çanta" key="8" /> 
-          </Picker>
+        <ImagePickerModal
+          modalVisible={modalVisible}
+          setModalVisible={setModalVisible}
+          launchCam={launchCam}
+          launchImageLib={launchImageLib}
+        />
+        <View style={styles.attributes}>
+          <View style={styles.attribute}>
+            <Text>Ana Kategori: </Text>
+            <Picker
+              mode="dropdown"
+              style={{maxWidth: 160}}
+              selectedValue={clothe.topCategory}
+              onValueChange={value =>
+                setClothe({...clothe, topCategory: value})
+              }>
+              {categoryData.map(category => (
+                <Picker.Item
+                  label={category.title}
+                  value={category.title}
+                  key="0"
+                />
+              ))}
+            </Picker>
+          </View>
+          <View style={styles.attribute}>
+            <Text>Kategori: </Text>
+            <Picker
+              mode="dropdown"
+              style={{maxWidth: 160}}
+              selectedValue={clothe.category}
+              onValueChange={value => setClothe({...clothe, category: value})}>
+              {clothe.topCategory == 'Üst Giyim' ? (
+                subCategoryData.top.map(category => (
+                  <Picker.Item
+                    label={category.label}
+                    value={category.value}
+                    key="0"
+                  />
+                ))
+              ) : clothe.topCategory == 'Alt Giyim' ? (
+                subCategoryData.bottom.map(category => (
+                  <Picker.Item
+                    label={category.label}
+                    value={category.value}
+                    key="0"
+                  />
+                ))
+              ) : clothe.topCategory == 'Tek Parça' ? (
+                subCategoryData.onePart.map(category => (
+                  <Picker.Item
+                    label={category.label}
+                    value={category.value}
+                    key="0"
+                  />
+                ))
+              ) : clothe.topCategory == 'Ayakkabı' ? (
+                subCategoryData.shoe.map(category => (
+                  <Picker.Item
+                    label={category.label}
+                    value={category.value}
+                    key="0"
+                  />
+                ))
+              ) : (
+                <Picker.Item label="Lütfen önce ana kategori seçiniz" />
+              )}
+            </Picker>
+          </View>
+
+          <View style={styles.attribute}>
+            <Text>Renk: </Text>
+            <Modal
+              animationType="fade"
+              transparent={true}
+              visible={colorModalVisible}
+              onRequestClose={() => {
+                setColorModalVisible(false);
+              }}>
+              <View style={{backgroundColor: '#000000aa', flex: 1}}>
+                <TouchableOpacity
+                  style={{flex: 1}}
+                  onPress={() => setColorModalVisible(false)}>
+                  <TouchableWithoutFeedback>
+                    <View style={styles.modal}>
+                      <FlatList
+                        key="#"
+                        data={colors}
+                        numColumns={6}
+                        keyExtractor={(item, index) => item + index}
+                        renderItem={({item}) => (
+                          <View style={{padding: 2}}>
+                            <TouchableOpacity
+                              onPress={() => {
+                                console.log(item.colorPath);
+                                setClothe({
+                                  ...clothe,
+                                  colorPath: item.colorPath,
+                                  colorNameTR: item.colorNameTR,
+                                });
+                                setColorModalVisible(false);
+                              }}>
+                              <Image
+                                source={item.colorPath}
+                                style={{
+                                  width: 30,
+                                  height: 30,
+                                  borderRadius: 50,
+                                }}></Image>
+                            </TouchableOpacity>
+                          </View>
+                        )}
+                      />
+                    </View>
+                  </TouchableWithoutFeedback>
+                </TouchableOpacity>
+              </View>
+            </Modal>
+            <TouchableOpacity onPress={() => setColorModalVisible(true)}>
+              <View style={{flexDirection:'row'}}>
+                <Text style={{alignSelf:'center',marginRight:20,fontSize:16}}>{clothe.colorNameTR}</Text>
+                <Image
+                  source={clothe.colorPath}
+                  style={{
+                    marginRight: 8,
+                    width: 30,
+                    height: 30,
+                    borderRadius: 50,
+                  }}></Image>
+              </View>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.attribute}>
+            <Text>Kalıp: </Text>
+            <Picker
+              mode="dropdown"
+              style={{maxWidth: 160}}
+              selectedValue={clothe.mold}
+              onValueChange={value => setClothe({...clothe, mold: value})}>
+              {clothe.topCategory == 'Üst Giyim' ? (
+                moldData.top.map(category => (
+                  <Picker.Item
+                    label={category.label}
+                    value={category.value}
+                    key="0"
+                  />
+                ))
+              ) : clothe.topCategory == 'Alt Giyim' ? (
+                moldData.bottom.map(category => (
+                  <Picker.Item
+                    label={category.label}
+                    value={category.value}
+                    key="0"
+                  />
+                ))
+              ) : clothe.topCategory == 'Tek Parça' ? (
+                moldData.onePart.map(category => (
+                  <Picker.Item
+                    label={category.label}
+                    value={category.value}
+                    key="0"
+                  />
+                ))
+              ) : clothe.topCategory == 'Ayakkabı' ? (
+                moldData.shoe.map(category => (
+                  <Picker.Item
+                    label={category.label}
+                    value={category.value}
+                    key="0"
+                  />
+                ))
+              ) : (
+                <Picker.Item label="Lütfen önce ana kategori seçiniz" />
+              )}
+            </Picker>
+          </View>
+          <View style={styles.attribute}>
+            <Text>Kumaş: </Text>
+            <Picker
+              mode="dropdown"
+              style={{maxWidth: 160}}
+              selectedValue={clothe.fabric}
+              onValueChange={value => setClothe({...clothe, fabric: value})}>
+              {clothe.topCategory == 'Üst Giyim' ? (
+                fabricData.top.map(category => (
+                  <Picker.Item
+                    label={category.label}
+                    value={category.value}
+                    key="0"
+                  />
+                ))
+              ) : clothe.topCategory == 'Alt Giyim' ? (
+                fabricData.bottom.map(category => (
+                  <Picker.Item
+                    label={category.label}
+                    value={category.value}
+                    key="0"
+                  />
+                ))
+              ) : clothe.topCategory == 'Tek Parça' ? (
+                fabricData.onePart.map(category => (
+                  <Picker.Item
+                    label={category.label}
+                    value={category.value}
+                    key="0"
+                  />
+                ))
+              ) : clothe.topCategory == 'Ayakkabı' ? (
+                fabricData.shoe.map(category => (
+                  <Picker.Item
+                    label={category.label}
+                    value={category.value}
+                    key="0"
+                  />
+                ))
+              ) : (
+                <Picker.Item label="Lütfen önce ana kategori seçiniz" />
+              )}
+            </Picker>
+          </View>
+          <View style={styles.attribute}>
+            <Text>Uzunluk: </Text>
+            <Picker
+              mode="dropdown"
+              style={{maxWidth: 160}}
+              selectedValue={clothe.length}
+              onValueChange={value => setClothe({...clothe, length: value})}>
+              {clothe.topCategory == 'Üst Giyim' ? (
+                lenghtData.top.map(category => (
+                  <Picker.Item
+                    label={category.label}
+                    value={category.value}
+                    key="0"
+                  />
+                ))
+              ) : clothe.topCategory == 'Alt Giyim' ? (
+                lenghtData.bottom.map(category => (
+                  <Picker.Item
+                    label={category.label}
+                    value={category.value}
+                    key="0"
+                  />
+                ))
+              ) : clothe.topCategory == 'Tek Parça' ? (
+                lenghtData.onePart.map(category => (
+                  <Picker.Item
+                    label={category.label}
+                    value={category.value}
+                    key="0"
+                  />
+                ))
+              ) : clothe.topCategory == 'Ayakkabı' ? (
+                lenghtData.shoe.map(category => (
+                  <Picker.Item
+                    label={category.label}
+                    value={category.value}
+                    key="0"
+                  />
+                ))
+              ) : (
+                <Picker.Item label="Lütfen önce ana kategori seçiniz" />
+              )}
+            </Picker>
+          </View>
+          <View style={styles.attribute}>
+            <Text>Tarz: </Text>
+            <Picker
+              mode="dropdown"
+              style={{maxWidth: 160}}
+              selectedValue={clothe.style}
+              onValueChange={value => setClothe({...clothe, style: value})}>
+              {styleData.map(category => (
+                <Picker.Item
+                  label={category.label}
+                  value={category.value}
+                  key="0"
+                />
+              ))}
+            </Picker>
+          </View>
+          <View style={styles.attribute}>
+            <Text>Mevsimlik Tercih: </Text>
+            <Picker
+              mode="dropdown"
+              style={{maxWidth: 160}}
+              selectedValue={clothe.season}
+              onValueChange={value => setClothe({...clothe, season: value})}>
+              {seasonData.map(category => (
+                <Picker.Item
+                  label={category.label}
+                  value={category.value}
+                  key="0"
+                />
+              ))}
+            </Picker>
+          </View>
         </View>
-        <View style={styles.attribute}>
-          <Text>Mevsimlik Tercih: </Text>
-          <Picker
-            style={{maxWidth: 150, height: 40}}
-            mode="dropdown"
-            selectedValue="spring"
-            onValueChange={(itemValue, itemIndex) =>
-              setClothe({...clothe, season: itemValue})
-            }>
-            <Picker.Item label="İlkbahar" value="İlkbahar" />
-            <Picker.Item label="Yaz" value="Yaz" />
-            <Picker.Item label="Sonbahar" value="Sonbahar" />
-            <Picker.Item label="Kış" value="Kış" />
-          </Picker>
-        </View>
+        <TouchableOpacity
+          style={{
+            alignSelf: 'center',
+            backgroundColor: profilePict ? 'tomato' : 'grey',
+            borderRadius: 50,
+            width: 80,
+            height: 40,
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+          onPress={uploadClothe}
+          disabled={profilePict ? false : true}>
+          <Text>Ekle</Text>
+        </TouchableOpacity>
       </View>
-      <TouchableOpacity
-        style={{
-          alignSelf: 'center',
-          backgroundColor: profilePict ? 'tomato' : 'grey',
-          borderRadius: 50,
-          width: 80,
-          height: 40,
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}
-        onPress={uploadClothe}
-        disabled={profilePict ? false : true}>
-        <Text>Ekle</Text>
-      </TouchableOpacity>
-    </View>
+    </ScrollView>
   );
 }
 
@@ -330,7 +1271,7 @@ const styles = StyleSheet.create({
   },
   modal: {
     marginVertical: '50%',
-    marginHorizontal: '24%',
+    marginHorizontal: '19%',
     backgroundColor: 'white',
     borderRadius: 20,
     padding: 15,

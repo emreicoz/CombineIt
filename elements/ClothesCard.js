@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {Image} from 'react-native';
-import {Container, Content, Card, CardItem} from 'native-base';
-export default class CardImageExample extends Component {
+import {Card, CardItem} from 'native-base';
+export default class ClotheCard extends Component {
   render() {
     return (
       <Card

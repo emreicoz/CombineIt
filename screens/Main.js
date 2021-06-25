@@ -4,8 +4,9 @@ import {
   TouchableOpacity,
   ImageBackground,
   StyleSheet,
+  Text
 } from 'react-native';
-import {Button, Text} from 'native-base';
+import {Button} from 'native-base';
 
 const image = require('../images/main.png');
 

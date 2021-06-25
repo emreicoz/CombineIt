@@ -1,34 +1,54 @@
 import React, {useContext, useState, useEffect} from 'react';
-import {View, Image, TextInput} from 'react-native';
-import {Text} from 'native-base';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+} from 'react-native';
 import {UserContext} from '../elements/UserContext';
+import NewCombineModal from '../elements/NewCombineModal';
 
 export default function Combine({navigation}) {
   const {user} = useContext(UserContext);
-  console.log('Kombin tarafı: ' + user);
-  var deneme = "";
+  console.log('Kombin tarafı: ', user);
+  const [modalVisible, setModalVisible] = useState(false);
 
-  /*const {spawn} = require('child_process');
-
-  const childPython = spawn('python',['--version']);
-
-  childPython.stdout.on('data', (data) => {
-    deneme = data;
-  })
-
-  childPython.stderr.on('data', (data)=> {
-    console.log('stderr: ' ,data);
-  })
-
-  childPython.on('close', (code)=>{
-    console.log('child process executed with code: ',code);
-  })*/
 
   return (
-    <View>
+    <View style={styles.container}>
       <Text>Kombin sayfası. </Text>
-      <Text>Deneme: {deneme} </Text>
-      <TextInput placeholder="deneme" />
+      <NewCombineModal
+        modalVisible={modalVisible}
+        setModalVisible={setModalVisible}
+        currentUser={user}
+      />
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => {
+          setModalVisible(true);
+        }}>
+        <Text style={styles.textStyle}>Kombin Öner</Text>
+      </TouchableOpacity>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  button: {
+    backgroundColor: 'tomato',
+    borderRadius: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+    alignSelf: 'center',
+    padding: 10,
+    position: 'absolute',
+    bottom: 10,
+  },
+  textStyle: {
+    color: 'white',
+    textAlign: 'center',
+  },
+});

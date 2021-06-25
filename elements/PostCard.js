@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { Image } from 'react-native';
-import { Container, Content, Card, CardItem, Thumbnail, Text, Button, Icon, Left, Body, Right } from 'native-base';
+import { Image, Text, StyleSheet } from 'react-native';
+import { Container, Content, Card, CardItem, Thumbnail, Button, Icon, Left, Body, Right } from 'native-base';
 export default class CardImageExample extends Component {
   render() {
     return (
@@ -12,7 +12,7 @@ export default class CardImageExample extends Component {
                 <Thumbnail source={this.props.profile} />
                 <Body>
                   <Text>Deneme Kişisi</Text>
-                  <Text note>denemekisisi</Text>
+                  <Text style={styles.subText}>denemekisisi</Text>
                 </Body>
               </Left>
             </CardItem>
@@ -42,3 +42,9 @@ export default class CardImageExample extends Component {
     );
   }
 }
+
+const styles = StyleSheet.create({
+  subText: {
+    color: '#d3d3d3'
+  }
+})
