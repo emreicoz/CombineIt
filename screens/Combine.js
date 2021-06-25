@@ -1,51 +1,54 @@
 import React, {useContext, useState, useEffect} from 'react';
-import {View, Image, TextInput, Text} from 'react-native';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+} from 'react-native';
 import {UserContext} from '../elements/UserContext';
+import NewCombineModal from '../elements/NewCombineModal';
 
 export default function Combine({navigation}) {
   const {user} = useContext(UserContext);
-  console.log('Kombin tarafı: ' + user);
-  const [apiData, setApiData] = useState();
+  console.log('Kombin tarafı: ', user);
+  const [modalVisible, setModalVisible] = useState(false);
 
-  const getApi = async () => {
-    try {
-      await fetch('https://combineit.pythonanywhere.com/post', {
-        method: 'POST',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          firstParam: 'yourValue',
-          secondParam: {
-            lol: 'loll',
-            hoh: 'hohh',
-            
-          } 
-        }),
-      })
-        .then(response => response.json())
-        .then(json => {
-          setApiData(json);
-          console.log(json);
-          return json.movies;
-          
-        });
-    } catch (error) {
-      console.error('ERror : ', error);
-    }
-  };
-
-  useEffect(() => {
-    console.log('Api a ulaşıldı');
-    getApi();
-  }, []);
 
   return (
-    <View>
+    <View style={styles.container}>
       <Text>Kombin sayfası. </Text>
-      <Text>Deneme: {apiData ? apiData.data.firstParam : 'Yok'} </Text>
-      <TextInput placeholder="deneme" />
+      <NewCombineModal
+        modalVisible={modalVisible}
+        setModalVisible={setModalVisible}
+        currentUser={user}
+      />
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => {
+          setModalVisible(true);
+        }}>
+        <Text style={styles.textStyle}>Kombin Öner</Text>
+      </TouchableOpacity>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  button: {
+    backgroundColor: 'tomato',
+    borderRadius: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+    alignSelf: 'center',
+    padding: 10,
+    position: 'absolute',
+    bottom: 10,
+  },
+  textStyle: {
+    color: 'white',
+    textAlign: 'center',
+  },
+});

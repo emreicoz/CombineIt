@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useContext} from 'react';
 import {
   View,
   Text,
@@ -10,18 +10,16 @@ import {
 } from 'react-native';
 import {SearchBar} from 'react-native-elements';
 import UserCard from '../elements/UserCard';
+import {UserContext} from '../elements/UserContext';
 
 import firestore from '@react-native-firebase/firestore';
 
 export default function Discover({navigation}) {
+  const {user} = useContext(UserContext);
   const [users, setUsers] = useState();
   const [filteredUsers, setFilteredUsers] = useState();
   const [searchValue, setSearchValue] = useState('');
-  const [isSearching, setIsSearching] = useState(false);
-  useEffect(() => {
-    console.log('Users için firestore a erişildi');
-    getUsers();
-  }, [isSearching]);
+
   const getUsers = () => {
     firestore()
       .collection('users')
@@ -37,14 +35,16 @@ export default function Discover({navigation}) {
   };
 
   const searchUser = searchValue => {
-    setFilteredUsers(users);
-    const filteredData = users.filter(item =>
-      item.userName.includes(searchValue),
-    );
-    if (searchValue) {
-      setFilteredUsers(filteredData);
-    } else {
-      setFilteredUsers(null);
+    if (users) {
+      setFilteredUsers(users);
+      const filteredData = users.filter(item =>
+        item.userName.includes(searchValue),
+      );
+      if (searchValue) {
+        setFilteredUsers(filteredData);
+      } else {
+        setFilteredUsers(null);
+      }
     }
   };
 
@@ -56,7 +56,12 @@ export default function Discover({navigation}) {
       <View style={{flex: 1}}>
         <SearchBar
           placeholder=""
-          onFocus={() => setIsSearching(!isSearching)}
+          showLoading
+          onFocus={() => {
+            console.log('Current user from discover: ', user);
+            console.log('Users için firestore a erişildi');
+            getUsers();
+          }}
           onChangeText={value => {
             setSearchValue(value);
             searchUser(value);
@@ -74,9 +79,12 @@ export default function Discover({navigation}) {
             <ScrollView>
               <TouchableOpacity
                 onPress={() =>
-                  navigation.navigate('SearchProfile', {user: item})
+                  navigation.navigate('SearchProfile', {
+                    searchedUser: item,
+                    currentUser: user,
+                  })
                 }>
-                <UserCard user={item}></UserCard>
+                <UserCard currentUser={user} searchedUser={item}></UserCard>
               </TouchableOpacity>
             </ScrollView>
           )}

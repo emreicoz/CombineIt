@@ -1,9 +1,10 @@
 import React, {Component} from 'react';
-import {Image, Text, TouchableOpacity} from 'react-native';
+import {Image, Text} from 'react-native';
 import {View, Card, CardItem, Right, Left} from 'native-base';
 import {Icon} from 'react-native-elements';
+
 export default class UserCard extends Component {
-  render() {
+  render(props) {
     return (
       <Card
         style={{
@@ -15,7 +16,7 @@ export default class UserCard extends Component {
           <Left>
             <View>
               <Image
-                source={{uri: this.props.user.profilePicture}}
+                source={{uri: this.props.searchedUser.profilePicture}}
                 style={{
                   height: 50,
                   width: 50,
@@ -24,23 +25,19 @@ export default class UserCard extends Component {
               />
             </View>
             <View style={{display: 'flex', padding: 10}}>
-              <Text>{this.props.user.userName}</Text>
+              <Text>{this.props.searchedUser.userName}</Text>
               <Text style={{color: '#6a6a6a', fontSize: 13}}>
-                {this.props.user.email}
+                {this.props.searchedUser.email}
               </Text>
             </View>
           </Left>
           <Right>
-            <View style={{flexDirection: 'row', alignItems: 'center',}}>
-              <TouchableOpacity
-                style={{
-                  borderRadius: 30,
-                  backgroundColor: '#1ba1e2',
-                  padding: 10,
-                }}>
-                <Text style={{color: 'white'}}>Takip Et</Text>
-              </TouchableOpacity>
-              <Icon name="chevron-right" type="material-community" style={{marginLeft:20,}}/>
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              <Icon
+                name="chevron-right"
+                type="material-community"
+                style={{marginLeft: 20}}
+              />
             </View>
           </Right>
         </CardItem>
