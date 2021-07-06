@@ -1,7 +1,7 @@
 import React from 'react';
 import {Image, View, Text, StyleSheet} from 'react-native';
 
-export default function CombineOneCard() {
+export default function combineTwoCard() {
   return (
     <View style={styles.container}>
       <Text style={styles.text}>Kombin Öneriniz</Text>

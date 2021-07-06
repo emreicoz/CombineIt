@@ -41,14 +41,14 @@ export default function SearchProfile({route}) {
       .doc(currentUser.userId)
       .collection('following')
       .doc(searchedUser.userId)
-      .set({});
+      .set({userInfo: searchedUser});
 
     firestore()
       .collection('users')
       .doc(searchedUser.userId)
       .collection('followers')
       .doc(currentUser.userId)
-      .set({});
+      .set({userInfo: currentUser});
 
     isFollowing();
   };
@@ -115,13 +115,13 @@ export default function SearchProfile({route}) {
           //showLeadingSpace={false} //  (default=true) show leading space in scrollable tabs inside the header
         >
           <TabScreen label={'Kıyafet'}>
-            <SearchWardrobe searchedUser={searchedUser}/>
+            <SearchWardrobe searchedUser={searchedUser} />
           </TabScreen>
           <TabScreen label={'Kombin'}>
             <Text>Kombin</Text>
           </TabScreen>
-          <TabScreen label="Moda">
-            <Text>Moda</Text>
+          <TabScreen label="Takip">
+            <Text>Takip</Text>
           </TabScreen>
         </Tabs>
       </View>
@@ -134,13 +134,13 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   profileContainer: {
-    flex:1,
+    flex: 1,
     backgroundColor: '#95a4b5',
-    flexDirection:'row',
-    justifyContent:'center',
+    flexDirection: 'row',
+    justifyContent: 'center',
   },
-  mainContainer:{
-    flex:2,
+  mainContainer: {
+    flex: 2,
   },
   profileInfo: {
     alignItems: 'center',
@@ -167,9 +167,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: 10,
-    position:'absolute',
-    right:0,
-    margin:15,
+    position: 'absolute',
+    right: 0,
+    margin: 15,
   },
   followButton: {
     backgroundColor: '#1886b7',
@@ -177,8 +177,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: 10,
-    position:'absolute',
-    right:0,
-    margin:15,
+    position: 'absolute',
+    right: 0,
+    margin: 15,
   },
 });

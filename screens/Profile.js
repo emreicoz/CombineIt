@@ -41,7 +41,7 @@ export default function Profile() {
         <TabScreen label={"Kıyafet"}>
           <WardrobeScreen />
         </TabScreen>
-        <TabScreen label={count + "Kombin"}>
+        <TabScreen label={"Kombin"}>
           <CombineScreen />
         </TabScreen>
         <TabScreen label="Moda">

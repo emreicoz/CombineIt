@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useCallback, useContext, useEffect, useState} from 'react';
 import {View, StyleSheet, FlatList, TouchableOpacity, Text} from 'react-native';
 import {Button} from 'native-base';
 import ClothesCard from '../elements/ClothesCard';
@@ -9,6 +9,7 @@ import firestore from '@react-native-firebase/firestore';
 export default function Wardrobe({navigation}) {
   const {user} = useContext(UserContext);
   const [wardrobe, setWardrobe] = useState([]);
+  console.log("Wardrobe render edildi");
 
   function groupBy(list, keyGetter) {
     const map = new Map();
@@ -66,33 +67,37 @@ export default function Wardrobe({navigation}) {
     getWardrobe();
   }, []);
 
-  console.log("Wardrobe user:",user);
+  const keyExtractor = useCallback((item, index) => item + index);
+
+  const renderInITem = useCallback(({item}) => (
+    <TouchableOpacity
+      onPress={() => navigation.navigate('ClotheDetail', {clothe: item})}>
+      <ClothesCard clothe={item.clothePicture} />
+    </TouchableOpacity>
+  ));
+
+  const renderItem = useCallback(({item}) => (
+    <View>
+      <Text style={{marginLeft: '2%'}}>{item.category}</Text>
+      <FlatList
+        data={item.clothes}
+        horizontal={true}
+        keyExtractor={keyExtractor}
+        renderItem={renderInITem}
+      />
+    </View>
+  ));
+
+  console.log('Wardrobe user:', user);
   return (
     <View style={{flex: 1, paddingHorizontal: 5}}>
       <FlatList
         data={wardrobe}
-        keyExtractor={(item, index) => item + index}
-        renderItem={({item}) => (
-          <View>
-            <Text style={{marginLeft: '2%'}}>{item.category}</Text>
-            <FlatList
-              data={item.clothes}
-              horizontal={true}
-              keyExtractor={(item, index) => item + index}
-              renderItem={({item}) => (
-                <TouchableOpacity
-                  onPress={() =>
-                    navigation.navigate('ClotheDetail', {clothe: item})
-                  }>
-                  <ClothesCard clothe={item.clothePicture} />
-                </TouchableOpacity>
-              )}
-            />
-          </View>
-        )}
+        keyExtractor={keyExtractor}
+        renderItem={renderItem}
       />
       <Button
-        onPress={() => navigation.navigate('NewClothe')}
+        onPress={() => navigation.navigate('NewClothe', {currentUser: user})}
         style={{
           position: 'absolute',
           alignSelf: 'center',
