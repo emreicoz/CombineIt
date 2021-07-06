@@ -1,6 +1,5 @@
 import React from 'react';
-import {Text, View, StyleSheet, Image, TouchableOpacity} from 'react-native';
-import {ScrollView} from 'react-native-gesture-handler';
+import {Text, View, StyleSheet, Image, TouchableOpacity, ScrollView} from 'react-native';
 
 export default function ClotheDetail({route}) {
   const {clothe} = route.params;
@@ -27,8 +26,8 @@ export default function ClotheDetail({route}) {
         return require('../Colors/gri.png');
       case 'Haki':
         return require('../Colors/haki.png');
-      case 'İndigo':
-        return require('../Colors/indigo.png');
+      case 'Koyu Yeşil':
+        return require('../Colors/koyu-yesil.png');
       case 'Kahve':
         return require('../Colors/kahve.png');
       case 'Kırmızı':
@@ -73,19 +72,16 @@ export default function ClotheDetail({route}) {
         <View style={styles.attributes}>
           <View style={styles.attribute}>
             <Text>Renk: </Text>
-            <View style={{flexDirection: 'row'}}>
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              <Text style={{marginRight: 10}}>{clothe.clotheColorNameTR}</Text>
               <Image
-                source={getColor(clothe.colorNameTR)}
+                source={getColor(clothe.clotheColorNameTR)}
                 style={{
                   width: 30,
                   height: 30,
                   borderRadius: 50,
-                  marginRight: 10
                 }}></Image>
-                <Text
-                style={{alignSelf: 'center'}}>
-                {clothe.colorNameTR}
-              </Text>
+              <Text style={{alignSelf: 'center'}}>{clothe.colorNameTR}</Text>
             </View>
           </View>
           <View style={styles.attribute}>

@@ -14,6 +14,7 @@ import ProfileScreen from './screens/Profile';
 import NewClotheScreen from './screens/NewClothe';
 import SearchProfileScreen from './screens/SearchProfile';
 import ClotheDetailScreen from './screens/ClotheDetail';
+import CombineDetailScreen from './screens/CombineDetail';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import auth from '@react-native-firebase/auth';
 import {createDrawerNavigator} from '@react-navigation/drawer';
@@ -80,6 +81,17 @@ const WardrobeStackScreens = () => (
     />
   </WardrobeStack.Navigator>
 );
+const CombineStack = createStackNavigator();
+const CombineStackScreens = () => (
+  <CombineStack.Navigator screenOptions={{headerShown: false}}>
+    <CombineStack.Screen name="Wardrobe" component={CombineScreen} />
+    <CombineStack.Screen
+      name="CombineDetail"
+      component={CombineDetailScreen}
+      tabBarOptions={{tabBarVisible: false}}
+    />
+  </CombineStack.Navigator>
+);
 const FashionStack = createStackNavigator();
 const FashionStackScreens = () => (
   <FashionStack.Navigator screenOptions={{headerShown: false}}>
@@ -136,7 +148,7 @@ const AppTabScreens = () => (
     <AppTab.Screen
       name="Combine"
       customtitle="Kombin"
-      component={CombineScreen}
+      component={CombineStackScreens}
       options={{
         tabBarLabel: () => <Text style={{fontSize: 10}}> Kombin </Text>,
         tabBarIcon: ({color}) => (

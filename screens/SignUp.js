@@ -1,5 +1,14 @@
 import React, {useState} from 'react';
-import {StyleSheet, View, TextInput, ScrollView, Image, Modal, ActivityIndicator, Text} from 'react-native';
+import {
+  StyleSheet,
+  View,
+  TextInput,
+  ScrollView,
+  Image,
+  Modal,
+  ActivityIndicator,
+  Text,
+} from 'react-native';
 import {Button, Toast, Root} from 'native-base';
 import {Formik} from 'formik';
 import * as yup from 'yup';
@@ -18,6 +27,7 @@ const SignUpSchema = yup.object().shape({
   userName: yup
     .string()
     .min(4, 'Kullanıcı adı 4 karakterden küçük olamaz.')
+    .max(16, 'Kullanıcı adı 16 karaketerden fazla olamaz')
     .required('Bu alan boş bırakılamaz'),
   email: yup
     .string()
@@ -37,6 +47,10 @@ const SignUpSchema = yup.object().shape({
 export default function SignUp() {
   const [modalVisible, setModalVisible] = useState(false);
   const [profilePict, setProfilePict] = useState(null);
+  const [maleGenderPicked, setMaleGenderPicked] = useState(false);
+  const [femaleGenderPicked, setFemaleGenderPicked] = useState(false);
+  const [gender, setGender] = useState('');
+
   const launchCam = () => {
     let options = {
       storageOptions: {
@@ -110,7 +124,7 @@ export default function SignUp() {
             setIsLoading(false);
           });
         const currentuser = auth().currentUser;
-        if(currentuser != null){
+        if (currentuser != null) {
           const imageRef = storage().ref(
             'users/' + currentuser.uid + '/profilePicture.png',
           );
@@ -127,6 +141,7 @@ export default function SignUp() {
               userId: currentuser.uid,
               nameSurname: values.nameSurname,
               userName: values.userName,
+              gender: gender,
               email: values.email,
               profilePicture: tempurl
                 ? tempurl
@@ -146,9 +161,9 @@ export default function SignUp() {
                     ? {
                         uri: profilePict.uri,
                       }
-                    : require('../images/profile.png')
+                    : require('../images/user.png')
                 }
-                style={{width: 90, height: 90, borderRadius: 20}}
+                style={{width: 80, height: 80, borderRadius: 20, alignSelf:'center'}}
               />
             </TouchableOpacity>
             <ImagePickerModal
@@ -173,6 +188,76 @@ export default function SignUp() {
                 onChangeText={handleChange('userName')}
                 onBlur={handleBlur('userName')}
                 value={values.userName}></TextInput>
+              <Text style={styles.errorTitle}>
+                {touched.userName && errors.userName}
+              </Text>
+              <View
+                style={{
+                  alignItems: 'center',
+                  borderRadius: 10,
+                  backgroundColor: '#dfe5e9',
+                  fontSize: 12,
+                  paddingLeft: '3%',
+                  flexDirection: 'row',
+                }}>
+                <Text
+                  style={{
+                    color: '#8a8e90',
+                    fontSize: 13,
+                    fontFamily: 'Avenir-Medium',
+                    marginRight: 70,
+                  }}>
+                  Cinsiyet
+                </Text>
+                <TouchableOpacity
+                  style={styles.genderButton}
+                  onPress={() => {
+                    setMaleGenderPicked(!maleGenderPicked);
+                    setFemaleGenderPicked(false);
+                    setGender('Erkek');
+                  }}>
+                  <Image
+                    source={
+                      maleGenderPicked
+                        ? require('../images/man-selected.png')
+                        : require('../images/man-unselected.png')
+                    }
+                    style={{width: 35, height: 35}}
+                  />
+                  <Text
+                    style={{
+                      color: 'black',
+                      fontSize: 13,
+                      fontFamily: 'Avenir-Medium',
+                    }}>
+                    Erkek
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.genderButton}
+                  onPress={() => {
+                    setFemaleGenderPicked(!femaleGenderPicked);
+                    setMaleGenderPicked(false);
+                    setGender('Kadın');
+                  }}>
+                  <Image
+                    source={
+                      femaleGenderPicked
+                        ? require('../images/woman-selected.png')
+                        : require('../images/woman-unselected.png')
+                    }
+                    style={{width: 35, height: 35}}
+                  />
+                  <Text
+                    style={{
+                      color: 'black',
+                      fontSize: 13,
+                      fontFamily: 'Avenir-Medium',
+                    }}>
+                    Kadın
+                  </Text>
+                </TouchableOpacity>
+              </View>
               <Text style={styles.errorTitle}>
                 {touched.userName && errors.userName}
               </Text>
@@ -211,7 +296,8 @@ export default function SignUp() {
                 title="Submit"
                 block
                 rounded
-                style={styles.button}
+                disabled={!femaleGenderPicked && !maleGenderPicked}
+                style={!femaleGenderPicked && !maleGenderPicked ? styles.passiveButton :styles.activeButton}
                 onPress={handleSubmit}>
                 {isLoading ? (
                   <ActivityIndicator size={25} color="#d3d3d3" />
@@ -239,7 +325,8 @@ const styles = StyleSheet.create({
     width: 90,
     height: 90,
     alignSelf: 'center',
-    margin: '2%',
+    justifyContent:'center',
+    margin: '1%',
     borderColor: 'gray',
   },
   textinputcontainer: {
@@ -256,7 +343,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     backgroundColor: '#dfe5e9',
     justifyContent: 'center',
-    height: '14%',
+    height: '12%',
     fontSize: 12,
     paddingLeft: '5%',
   },
@@ -265,12 +352,28 @@ const styles = StyleSheet.create({
     width: '60%',
     alignSelf: 'center',
   },
-  button: {
+  activeButton: {
     justifyContent: 'center',
     backgroundColor: '#1ba1e2',
-    margin: 15,
+    marginTop: 8,
     borderRadius: 10,
-    height: '70%',
+    maxHeight: '70%',
+  },
+  passiveButton: {
+    justifyContent: 'center',
+    backgroundColor: 'grey',
+    marginTop: 8,
+    borderRadius: 10,
+    maxHeight: '70%',
+  },
+  genderButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#ced4d8',
+    padding: 5,
+    borderRadius: 5,
+    marginLeft: 20,
+    maxHeight:'80%',
   },
   text: {
     color: '#E0E0E0',

@@ -9,17 +9,20 @@ import {
   FlatList,
   Modal,
   ScrollView,
+  ActivityIndicator,
 } from 'react-native';
 import ImagePickerModal from '../elements/ImagePickerModal';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import {Picker} from 'native-base';
-import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage';
 
-export default function NewClothe({navigation}) {
+export default function NewClothe({navigation, route}) {
   const [modalVisible, setModalVisible] = useState(false);
   const [profilePict, setProfilePict] = useState();
+  const {currentUser} = route.params;
+  const [isLoading, setIsLoading] = useState(false);
+
   const launchCam = () => {
     let options = {
       storageOptions: {
@@ -137,11 +140,11 @@ export default function NewClothe({navigation}) {
       colorPathh: 'haki.png',
     },
     {
-      colorName: 'Indigo',
-      colorNameTR: 'İndigo',
-      colorPath: require('../Colors/indigo.png'),
-      colorCode: '#4B0082',
-      colorPathh: 'indigo.png',
+      colorName: 'Dark Green',
+      colorNameTR: 'Koyu Yeşil',
+      colorPath: require('../Colors/koyu-yesil.png'),
+      colorCode: '#006400',
+      colorPathh: 'koyu-yesil.png',
     },
     {
       colorName: 'Coffee',
@@ -242,192 +245,37 @@ export default function NewClothe({navigation}) {
     colorNameTR: 'Siyah',
     colorPath: require('../Colors/siyah.png'),
     colorPathh: 'siyah.png',
-    topCategory: '',
-    category: '',
-    mold: '',
-    fabric: '',
-    length: '',
-    season: '',
-    style: '',
+    topCategory: 'Yok',
+    category: 'Yok',
+    mold: 'Yok',
+    fabric: 'Yok',
+    length: 'Yok',
+    style: 'Günlük',
+    season: 'İlkbahar',
   });
-  const categoryData = [
+  const topCategoryData = [
+    {
+      title: 'Seçiniz',
+    },
     {
       title: 'Üst Giyim',
-      data: [
-        {
-          value: 'Atlet',
-          label: 'Atlet',
-          avatarSource: {
-            uri: 'https://img.icons8.com/cute-clipart/2x/iphone-x.png',
-          },
-        },
-        {
-          value: 'Bluz',
-          label: 'Bluz',
-          avatarSource: {
-            uri: 'https://img.icons8.com/cute-clipart/2x/iphone-x.png',
-          },
-        },
-        {
-          value: 'Ceket',
-          label: 'Ceket',
-          avatarSource: {
-            uri: 'https://img.icons8.com/cute-clipart/2x/iphone-x.png',
-          },
-        },
-        {
-          value: 'Büstiyer',
-          label: 'Büstiyer',
-          avatarSource: {
-            uri: 'https://img.icons8.com/cute-clipart/2x/iphone-x.png',
-          },
-        },
-        {
-          value: 'Gömlek',
-          label: 'Gömlek',
-          avatarSource: {
-            uri: 'https://img.icons8.com/cute-clipart/2x/iphone-x.png',
-          },
-        },
-        {
-          value: 'Kazak',
-          label: 'Kazak',
-          avatarSource: {
-            uri: 'https://img.icons8.com/cute-clipart/2x/iphone-x.png',
-          },
-        },
-        {
-          value: 'Sweatshirt',
-          label: 'Sweatshirt',
-          avatarSource: {
-            uri: 'https://img.icons8.com/cute-clipart/2x/iphone-x.png',
-          },
-        },
-        {
-          value: 'Tişört',
-          label: 'Tişört',
-          avatarSource: {
-            uri: 'https://img.icons8.com/cute-clipart/2x/iphone-x.png',
-          },
-        },
-      ],
     },
     {
       title: 'Alt Giyim',
-      data: [
-        {
-          value: 'Etek',
-          label: 'Etek',
-          avatarSource: {
-            uri: 'https://img.icons8.com/cute-clipart/344/android.png',
-          },
-        },
-        {
-          value: 'Kapri',
-          label: 'Kapri',
-          avatarSource: {
-            uri: 'https://img.icons8.com/cute-clipart/344/android.png',
-          },
-        },
-        {
-          value: 'Pantolon',
-          label: 'Pantolon',
-          avatarSource: {
-            uri: 'https://img.icons8.com/cute-clipart/344/android.png',
-          },
-        },
-        {
-          value: 'Şort',
-          label: 'Şort',
-          avatarSource: {
-            uri: 'https://img.icons8.com/cute-clipart/344/android.png',
-          },
-        },
-        {
-          value: 'Tayt',
-          label: 'Tayt',
-          avatarSource: {
-            uri: 'https://img.icons8.com/cute-clipart/344/android.png',
-          },
-        },
-      ],
     },
     {
       title: 'Tek Parça',
-      data: [
-        {
-          value: 'Elbise',
-          label: 'Elbise',
-          avatarSource: {
-            uri: 'https://img.icons8.com/cute-clipart/344/android.png',
-          },
-        },
-        {
-          value: 'Tulum',
-          label: 'Tulum',
-          avatarSource: {
-            uri: 'https://img.icons8.com/cute-clipart/344/android.png',
-          },
-        },
-      ],
     },
     {
       title: 'Ayakkabı',
-      data: [
-        {
-          value: 'Babet',
-          label: 'Babet',
-          avatarSource: {
-            uri: 'https://img.icons8.com/cute-clipart/344/android.png',
-          },
-        },
-        {
-          value: 'Bot',
-          label: 'Bot',
-          avatarSource: {
-            uri: 'https://img.icons8.com/cute-clipart/344/android.png',
-          },
-        },
-        {
-          value: 'Çizme',
-          label: 'Çizme',
-          avatarSource: {
-            uri: 'https://img.icons8.com/cute-clipart/344/android.png',
-          },
-        },
-        {
-          value: 'Mokasen',
-          label: 'Mokasen',
-          avatarSource: {
-            uri: 'https://img.icons8.com/cute-clipart/344/android.png',
-          },
-        },
-        {
-          value: 'Sandalet',
-          label: 'Sandalet',
-          avatarSource: {
-            uri: 'https://img.icons8.com/cute-clipart/344/android.png',
-          },
-        },
-        {
-          value: 'Spor Ayakkabı',
-          label: 'Spor Ayakkabı',
-          avatarSource: {
-            uri: 'https://img.icons8.com/cute-clipart/344/android.png',
-          },
-        },
-        {
-          value: 'Topuklu Ayakkabı',
-          label: 'Topuklu Ayakkabı',
-          avatarSource: {
-            uri: 'https://img.icons8.com/cute-clipart/344/android.png',
-          },
-        },
-      ],
     },
   ];
   const subCategoryData = {
     top: [
+      {
+        value: '',
+        label: 'Seçiniz',
+      },
       {
         value: 'Atlet',
         label: 'Atlet',
@@ -438,13 +286,6 @@ export default function NewClothe({navigation}) {
       {
         value: 'Bluz',
         label: 'Bluz',
-        avatarSource: {
-          uri: 'https://img.icons8.com/cute-clipart/2x/iphone-x.png',
-        },
-      },
-      {
-        value: 'Ceket',
-        label: 'Ceket',
         avatarSource: {
           uri: 'https://img.icons8.com/cute-clipart/2x/iphone-x.png',
         },
@@ -487,6 +328,10 @@ export default function NewClothe({navigation}) {
     ],
     bottom: [
       {
+        value: '',
+        label: 'Seçiniz',
+      },
+      {
         value: 'Etek',
         label: 'Etek',
         avatarSource: {
@@ -524,6 +369,10 @@ export default function NewClothe({navigation}) {
     ],
     onePart: [
       {
+        value: '',
+        label: 'Seçiniz',
+      },
+      {
         value: 'Elbise',
         label: 'Elbise',
         avatarSource: {
@@ -539,6 +388,10 @@ export default function NewClothe({navigation}) {
       },
     ],
     shoe: [
+      {
+        value: '',
+        label: 'Seçiniz',
+      },
       {
         value: 'Babet',
         label: 'Babet',
@@ -593,6 +446,10 @@ export default function NewClothe({navigation}) {
   const moldData = {
     top: [
       {
+        value: '',
+        label: 'Seçiniz',
+      },
+      {
         value: 'Bol',
         label: 'Bol',
       },
@@ -610,6 +467,10 @@ export default function NewClothe({navigation}) {
       },
     ],
     bottom: [
+      {
+        value: '',
+        label: 'Seçiniz',
+      },
       {
         value: 'Bol',
         label: 'Bol',
@@ -641,6 +502,10 @@ export default function NewClothe({navigation}) {
     ],
     onePart: [
       {
+        value: '',
+        label: 'Seçiniz',
+      },
+      {
         value: 'Bol',
         label: 'Bol',
       },
@@ -659,13 +524,17 @@ export default function NewClothe({navigation}) {
     ],
     shoe: [
       {
-        value: '',
+        value: 'Yok',
         label: 'Ayakkabı için kalıp seçmenize gerek yoktur.',
       },
     ],
   };
   const fabricData = {
     top: [
+      {
+        value: '',
+        label: 'Seçiniz',
+      },
       {
         value: 'Penye',
         label: 'Penye',
@@ -689,6 +558,10 @@ export default function NewClothe({navigation}) {
     ],
     bottom: [
       {
+        value: '',
+        label: 'Seçiniz',
+      },
+      {
         value: 'Kot',
         label: 'Kot',
       },
@@ -714,6 +587,10 @@ export default function NewClothe({navigation}) {
       },
     ],
     onePart: [
+      {
+        value: '',
+        label: 'Seçiniz',
+      },
       {
         value: 'Kot',
         label: 'Kot',
@@ -749,6 +626,10 @@ export default function NewClothe({navigation}) {
     ],
     shoe: [
       {
+        value: '',
+        label: 'Seçiniz',
+      },
+      {
         value: 'Deri',
         label: 'Deri',
       },
@@ -768,6 +649,10 @@ export default function NewClothe({navigation}) {
   };
   const lenghtData = {
     top: [
+      {
+        value: '',
+        label: 'Seçiniz',
+      },
       {
         value: 'Uzun',
         label: 'Uzun',
@@ -791,6 +676,10 @@ export default function NewClothe({navigation}) {
     ],
     bottom: [
       {
+        value: '',
+        label: 'Seçiniz',
+      },
+      {
         value: 'Uzun',
         label: 'Uzun',
       },
@@ -808,6 +697,10 @@ export default function NewClothe({navigation}) {
       },
     ],
     onePart: [
+      {
+        value: '',
+        label: 'Seçiniz',
+      },
       {
         value: 'Uzun',
         label: 'Uzun',
@@ -827,7 +720,7 @@ export default function NewClothe({navigation}) {
     ],
     shoe: [
       {
-        value: '',
+        value: 'Yok',
         label: 'Ayakkabı için uzunluk seçmenize gerek yoktur.',
       },
     ],
@@ -848,20 +741,13 @@ export default function NewClothe({navigation}) {
   ];
   const seasonData = [
     {
-      value: 'İlkbahar',
-      label: 'İlkbahar',
+      value: 'İlkbahar Yaz',
+      label: 'İlkbahar Yaz',
     },
+
     {
-      value: 'Yaz',
-      label: 'Yaz',
-    },
-    {
-      value: 'Sonbahar',
-      label: 'Sonbahar',
-    },
-    {
-      value: 'Kış',
-      label: 'Kış',
+      value: 'Sonbahar Kış',
+      label: 'Sonbahar Kış',
     },
   ];
 
@@ -879,9 +765,9 @@ export default function NewClothe({navigation}) {
   }, [profilePict]);
 
   const uploadClothe = async () => {
-    const currentuser = auth().currentUser;
+    setIsLoading(true);
     const imageRef = storage().ref(
-      'users/' + currentuser.uid + '/clothes/' + clothe.id + '.png',
+      'users/' + currentUser.userId + '/clothes/' + clothe.id + '.png',
     );
     const uploadImage = async () => {
       await imageRef.putFile(profilePict.uri);
@@ -891,12 +777,13 @@ export default function NewClothe({navigation}) {
     const tempurl = await uploadImage();
     await firestore()
       .collection('users')
-      .doc(currentuser.uid)
+      .doc(currentUser.userId)
       .collection('clothes')
       .doc()
       .set({
         clotheId: clothe.id,
-        colorNameTR: clothe.colorNameTR,
+        clotheGender: currentUser.gender,
+        clotheColorNameTR: clothe.colorNameTR,
         clotheTopCategory: clothe.topCategory,
         clotheCategory: clothe.category,
         clotheMold: clothe.mold,
@@ -906,6 +793,7 @@ export default function NewClothe({navigation}) {
         clotheStyle: clothe.style,
         clothePicture: tempurl,
       });
+    setIsLoading(false);
     navigation.popToTop();
   };
 
@@ -944,7 +832,7 @@ export default function NewClothe({navigation}) {
               onValueChange={value =>
                 setClothe({...clothe, topCategory: value})
               }>
-              {categoryData.map(category => (
+              {topCategoryData.map(category => (
                 <Picker.Item
                   label={category.title}
                   value={category.title}
@@ -1047,8 +935,11 @@ export default function NewClothe({navigation}) {
               </View>
             </Modal>
             <TouchableOpacity onPress={() => setColorModalVisible(true)}>
-              <View style={{flexDirection:'row'}}>
-                <Text style={{alignSelf:'center',marginRight:20,fontSize:16}}>{clothe.colorNameTR}</Text>
+              <View style={{flexDirection: 'row'}}>
+                <Text
+                  style={{alignSelf: 'center', marginRight: 20, fontSize: 16}}>
+                  {clothe.colorNameTR}
+                </Text>
                 <Image
                   source={clothe.colorPath}
                   style={{
@@ -1237,7 +1128,11 @@ export default function NewClothe({navigation}) {
           }}
           onPress={uploadClothe}
           disabled={profilePict ? false : true}>
-          <Text>Ekle</Text>
+          {isLoading ? (
+            <ActivityIndicator size={'small'} color={'white'} />
+          ) : (
+            <Text>Ekle</Text>
+          )}
         </TouchableOpacity>
       </View>
     </ScrollView>
